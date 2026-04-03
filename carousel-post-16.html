@@ -150,13 +150,13 @@ function Carousel() {
             <Anim delay={0} active={cur === 0}><Tag>Constructech Club</Tag></Anim>
             <Anim delay={80} active={cur === 0}>
               <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(24px, 4.5vw, 36px)", fontWeight: 400, color: DARK, lineHeight: 1.15, margin: "0 0 16px" }}>
-                Mes ouvriers se sont tourn{"\u00e9"} les pouces pendant 4 jours.
+                Mes ouvriers se sont tourné les pouces pendant 4 jours.
               </h1>
             </Anim>
             <Anim delay={160} active={cur === 0}>
               <div style={{ width: "40px", height: "1px", background: GOLD, margin: "0 auto 16px" }}/>
               <p style={{ fontSize: "clamp(16px, 3vw, 22px)", fontWeight: 500, color: GOLD, margin: "0 0 24px", lineHeight: 1.3, fontFamily: "'Instrument Serif', serif" }}>
-                Pas une gr{"\u00e8"}ve.<br/>Un probl{"\u00e8"}me de mat{"\u00e9"}riel.
+                Pas une grève.<br/>Un problème de matériel.
               </p>
             </Anim>
             <Anim delay={280} active={cur === 0}>
@@ -170,29 +170,29 @@ function Carousel() {
         {/* SLIDE 2: LA CHAINE */}
         <Slide active={cur === 1} dir={dir}>
           <Anim delay={0} active={cur === 1}>
-            <Tag color={RED}>Le probl{"\u00e8"}me</Tag>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>La cha{"\u00ee"}ne de l'urgence</h2>
+            <Tag color={RED}>Le problème</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>La chaîne de l'urgence</h2>
           </Anim>
           <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
             <Anim delay={80} active={cur === 1}>
-              <FlowStep icon="👷" label="L'ouvrier constate qu'il manque du mat{"\u00e9"}riel" sub="Lundi matin, sur le chantier" color="#3498db" accent="#3498db"/>
+              <FlowStep icon="👷" label="L’ouvrier constate qu’il manque du matériel" sub="Lundi matin, sur le chantier" color="#3498db" accent="#3498db"/>
             </Anim>
             <Anim delay={140} active={cur === 1}><FlowArrow/></Anim>
             <Anim delay={160} active={cur === 1}>
-              <FlowStep icon="📞" label="Il appelle le chef de chantier" sub="Qui doit arr{"\u00ea"}ter ce qu'il fait pour g{"\u00e9"}rer" color={ORANGE} accent={ORANGE}/>
+              <FlowStep icon="📞" label="Il appelle le chef de chantier" sub="Qui doit arrêter ce qu’il fait pour gérer" color={ORANGE} accent={ORANGE}/>
             </Anim>
             <Anim delay={220} active={cur === 1}><FlowArrow/></Anim>
             <Anim delay={260} active={cur === 1}>
-              <FlowStep icon="🛒" label="Le chef contacte l'acheteur" sub="Qui passe une commande en urgence" color={ORANGE} accent={ORANGE}/>
+              <FlowStep icon="🛒" label="Le chef contacte l’acheteur" sub="Qui passe une commande en urgence" color={ORANGE} accent={ORANGE}/>
             </Anim>
             <Anim delay={320} active={cur === 1}><FlowArrow/></Anim>
             <Anim delay={360} active={cur === 1}>
-              <FlowStep icon="🏭" label="Le fournisseur livre... quand il peut" sub="D{"\u00e9"}lai rallong{"\u00e9"}, surco{"\u00fb"}t express" color={RED} bg="#FFF5F5" border="#fde2e2" accent={RED}/>
+              <FlowStep icon="🏭" label="Le fournisseur livre... quand il peut" sub="Délai rallongé, surcoût express" color={RED} bg="#FFF5F5" border="#fde2e2" accent={RED}/>
             </Anim>
           </div>
           <Anim delay={420} active={cur === 1}>
             <div style={{ marginTop: "14px", padding: "10px 14px", borderRadius: "10px", background: `${RED}08`, border: `1px solid ${RED}20`, textAlign: "center" }}>
-              <p style={{ fontSize: "12px", color: RED, fontWeight: 600, margin: 0 }}>C'est d{"\u00e9"}j{"\u00e0"} urgent avant m{"\u00ea"}me que la commande ne parte.</p>
+              <p style={{ fontSize: "12px", color: RED, fontWeight: 600, margin: 0 }}>C'est déjà urgent avant même que la commande ne parte.</p>
             </div>
           </Anim>
         </Slide>
@@ -201,16 +201,16 @@ function Carousel() {
         <Slide active={cur === 2} dir={dir}>
           <Anim delay={0} active={cur === 2}>
             <Tag color={RED}>L'impact</Tag>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 20px" }}>Ce que {"\u00e7"}a co{"\u00fb"}te vraiment</h2>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 20px" }}>Ce que ça coûte vraiment</h2>
           </Anim>
 
           <Anim delay={100} active={cur === 2}>
             <div style={{ background: "#FFF5F5", borderRadius: "14px", border: "1px solid #fde2e2", padding: "20px", textAlign: "center", marginBottom: "14px" }}>
-              <p style={{ fontSize: "12px", color: RED, fontWeight: 600, margin: "0 0 6px", textTransform: "uppercase", letterSpacing: "0.08em" }}>4 jours d'arr{"\u00ea"}t</p>
+              <p style={{ fontSize: "12px", color: RED, fontWeight: 600, margin: "0 0 6px", textTransform: "uppercase", letterSpacing: "0.08em" }}>4 jours d'arrêt</p>
               <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "42px", color: RED, margin: "0 0 4px", lineHeight: 1 }}>
                 4 ouvriers
               </p>
-              <p style={{ fontSize: "12px", color: "#e74c3c90", margin: 0 }}>+ surco{"\u00fb"}ts livraison express + d{"\u00e9"}sorganisation</p>
+              <p style={{ fontSize: "12px", color: "#e74c3c90", margin: 0 }}>+ surcoûts livraison express + désorganisation</p>
             </div>
           </Anim>
 
@@ -219,28 +219,28 @@ function Carousel() {
               <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
                 <p style={{ fontSize: "20px", margin: "0 0 4px" }}>💰</p>
                 <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: ORANGE, margin: "0 0 2px" }}>+30%</p>
-                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>surco{"\u00fb"}t sur les<br/>commandes urgentes</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>surcoût sur les<br/>commandes urgentes</p>
               </div>
             </Anim>
             <Anim delay={250} active={cur === 2}>
               <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
                 <p style={{ fontSize: "20px", margin: "0 0 4px" }}>⏱️</p>
                 <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: ORANGE, margin: "0 0 2px" }}>3-5h</p>
-                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>perdues par le chef<br/>{"\u00e0"} g{"\u00e9"}rer l'urgence</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>perdues par le chef<br/>à gérer l'urgence</p>
               </div>
             </Anim>
             <Anim delay={300} active={cur === 2}>
               <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
                 <p style={{ fontSize: "20px", margin: "0 0 4px" }}>🔄</p>
                 <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: ORANGE, margin: "0 0 2px" }}>40%</p>
-                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>des commandes<br/>pass{"\u00e9"}es en urgence</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>des commandes<br/>passées en urgence</p>
               </div>
             </Anim>
             <Anim delay={350} active={cur === 2}>
               <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
                 <p style={{ fontSize: "20px", margin: "0 0 4px" }}>😤</p>
                 <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: ORANGE, margin: "0 0 2px" }}>Moral</p>
-                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>{"\u00e9"}quipes d{"\u00e9"}mobilis{"\u00e9"}es<br/>par l'attente</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>équipes démobilisées<br/>par l'attente</p>
               </div>
             </Anim>
           </div>
@@ -250,7 +250,7 @@ function Carousel() {
         <Slide active={cur === 3} dir={dir}>
           <Anim delay={0} active={cur === 3}>
             <Tag color={GREEN}>La solution</Tag>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>Anticiper au lieu de r{"\u00e9"}agir</h2>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>Anticiper au lieu de réagir</h2>
           </Anim>
           <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
             <Anim delay={80} active={cur === 3}>
@@ -258,20 +258,20 @@ function Carousel() {
             </Anim>
             <Anim delay={140} active={cur === 3}><FlowArrow color={GREEN}/></Anim>
             <Anim delay={160} active={cur === 3}>
-              <FlowStep icon="📊" label="Consolidation centralis{"\u00e9"}e" sub="L'acheteur regroupe tous les besoins en un seul tableau" color="#3498db" accent="#3498db"/>
+              <FlowStep icon="📊" label="Consolidation centralisée" sub="L’acheteur regroupe tous les besoins en un seul tableau" color="#3498db" accent="#3498db"/>
             </Anim>
             <Anim delay={220} active={cur === 3}><FlowArrow color={GREEN}/></Anim>
             <Anim delay={260} active={cur === 3}>
-              <FlowStep icon="📦" label="Commande group{"\u00e9"}e mardi" sub="Un seul bon, un seul envoi, des prix n{"\u00e9"}goci{"\u00e9"}s" color={GREEN} bg="#F0FAF4" border="#d4edda" accent={GREEN}/>
+              <FlowStep icon="📦" label="Commande groupée mardi" sub="Un seul bon, un seul envoi, des prix négociés" color={GREEN} bg="#F0FAF4" border="#d4edda" accent={GREEN}/>
             </Anim>
             <Anim delay={320} active={cur === 3}><FlowArrow color={GREEN}/></Anim>
             <Anim delay={360} active={cur === 3}>
-              <FlowStep icon="🚚" label="Livraison planifi{"\u00e9"}e jeudi" sub="Mat{"\u00e9"}riel sur chantier avant le besoin r{"\u00e9"}el" color={GREEN} bg="#F0FAF4" border="#d4edda" accent={GREEN}/>
+              <FlowStep icon="🚚" label="Livraison planifiée jeudi" sub="Matériel sur chantier avant le besoin réel" color={GREEN} bg="#F0FAF4" border="#d4edda" accent={GREEN}/>
             </Anim>
           </div>
           <Anim delay={420} active={cur === 3}>
             <p style={{ fontSize: "11px", color: "#bbb", textAlign: "center", marginTop: "14px", fontStyle: "italic" }}>
-              Simple. R{"\u00e9"}p{"\u00e9"}table. Pas besoin de logiciel.
+              Simple. Répétable. Pas besoin de logiciel.
             </p>
           </Anim>
         </Slide>
@@ -280,7 +280,7 @@ function Carousel() {
         <Slide active={cur === 4} dir={dir}>
           <div style={{ textAlign: "center" }}>
             <Anim delay={0} active={cur === 4}>
-              <Tag color={GREEN}>R{"\u00e9"}sultat</Tag>
+              <Tag color={GREEN}>Résultat</Tag>
               <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "18px", color: "#999", margin: "0 0 8px" }}>Commandes en urgence</p>
             </Anim>
             <Anim delay={150} active={cur === 4}>
@@ -296,14 +296,14 @@ function Carousel() {
                   <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "52px", color: GREEN, margin: 0, lineHeight: 1 }}>
                     <NumberTicker value={8} suffix="%" active={cur === 4}/>
                   </p>
-                  <p style={{ fontSize: "11px", color: GREEN, fontWeight: 600, margin: "4px 0 0", textTransform: "uppercase", letterSpacing: "0.06em" }}>Apr{"\u00e8"}s</p>
+                  <p style={{ fontSize: "11px", color: GREEN, fontWeight: 600, margin: "4px 0 0", textTransform: "uppercase", letterSpacing: "0.06em" }}>Après</p>
                 </div>
               </div>
             </Anim>
             <Anim delay={300} active={cur === 4}>
               <div style={{ background: "#F0FAF4", borderRadius: "14px", border: "1px solid #d4edda", padding: "20px", margin: "16px 0" }}>
                 <p style={{ fontSize: "13px", color: "#444", lineHeight: 1.6, margin: 0 }}>
-                  Moins d'urgences = moins de surco{"\u00fb"}ts, moins de stress,<br/>et des {"\u00e9"}quipes qui avancent au lieu d'attendre.
+                  Moins d'urgences = moins de surcoûts, moins de stress,<br/>et des équipes qui avancent au lieu d'attendre.
                 </p>
               </div>
             </Anim>
@@ -325,12 +325,12 @@ function Carousel() {
             </Anim>
             <Anim delay={100} active={cur === 5}>
               <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "28px", color: DARK, lineHeight: 1.3, margin: "0 0 12px" }}>
-                Vos urgences sont-elles vraiment impr{"\u00e9"}visibles ?
+                Vos urgences sont-elles vraiment imprévisibles ?
               </h2>
             </Anim>
             <Anim delay={200} active={cur === 5}>
               <p style={{ fontSize: "14px", color: "#888", lineHeight: 1.6, margin: "0 0 28px" }}>
-                La plupart des achats "urgents" sont pr{"\u00e9"}visibles.<br/>Il manque juste un process pour les anticiper.
+                La plupart des achats "urgents" sont prévisibles.<br/>Il manque juste un process pour les anticiper.
               </p>
             </Anim>
             <Anim delay={300} active={cur === 5}>
@@ -380,7 +380,7 @@ function Carousel() {
         </div>
 
         <p style={{ position: "absolute", bottom: "52px", left: 0, right: 0, textAlign: "center", fontSize: "10px", color: "#ccc" }}>
-          {"\u2190"} {"\u2192"} pour naviguer
+          ← → pour naviguer
         </p>
       </div>
     </div>

@@ -132,9 +132,9 @@ function Carousel() {
           <div style={{ textAlign: "center", maxWidth: "500px", margin: "0 auto" }}>
             <Anim delay={0} active={cur === 0}><Tag>Constructech Club</Tag></Anim>
             <Anim delay={80} active={cur === 0}>
-              <div style={{ fontSize: "56px", color: `${GOLD}30`, margin: "0 0 8px", fontFamily: "Georgia, serif" }}>{"\u201c"}</div>
+              <div style={{ fontSize: "56px", color: `${GOLD}30`, margin: "0 0 8px", fontFamily: "Georgia, serif" }}>“</div>
               <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 400, color: DARK, lineHeight: 1.25, margin: "0 0 12px" }}>
-                Les CR ? Je me les fais le soir avec une petite bi{"\u00e8"}re.
+                Les CR ? Je me les fais le soir avec une petite bière.
               </h1>
             </Anim>
             <Anim delay={160} active={cur === 0}>
@@ -142,7 +142,7 @@ function Carousel() {
             </Anim>
             <Anim delay={280} active={cur === 0}>
               <p style={{ fontSize: "13px", color: "#999", lineHeight: 1.6 }}>
-                Quand r{"\u00e9"}diger un compte-rendu<br/>devient une corvée de fin de journée.
+                Quand rédiger un compte-rendu<br/>devient une corvée de fin de journée.
               </p>
             </Anim>
           </div>
@@ -151,8 +151,8 @@ function Carousel() {
         {/* SLIDE 2: LA REALITE */}
         <Slide active={cur === 1} dir={dir}>
           <Anim delay={0} active={cur === 1}>
-            <Tag color={RED}>La r{"\u00e9"}alit{"\u00e9"}</Tag>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>Le temps r{"\u00e9"}el pass{"\u00e9"} sur les CR</h2>
+            <Tag color={RED}>La réalité</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>Le temps réel passé sur les CR</h2>
           </Anim>
           <Anim delay={100} active={cur === 1}>
             <div style={{ background: "#FFF5F5", borderRadius: "14px", border: "1px solid #fde2e2", padding: "20px", marginBottom: "14px" }}>
@@ -161,7 +161,7 @@ function Carousel() {
                 <p style={{ fontSize: "16px", color: RED, fontWeight: 600, margin: 0 }}>min/CR</p>
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: "8px", flexWrap: "wrap" }}>
-                <span style={{ padding: "4px 10px", borderRadius: "6px", background: "#fff", border: "1px solid #fde2e2", fontSize: "11px", color: "#999" }}>{"\u00d7"} 3-4 CR/semaine</span>
+                <span style={{ padding: "4px 10px", borderRadius: "6px", background: "#fff", border: "1px solid #fde2e2", fontSize: "11px", color: "#999" }}>× 3-4 CR/semaine</span>
                 <span style={{ padding: "4px 10px", borderRadius: "6px", background: "#fff", border: "1px solid #fde2e2", fontSize: "11px", color: "#999" }}>= ~2h/semaine le soir</span>
               </div>
             </div>
@@ -171,18 +171,18 @@ function Carousel() {
               <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
                 <p style={{ fontSize: "18px", margin: "0 0 4px" }}>🌙</p>
                 <p style={{ fontSize: "11px", fontWeight: 600, color: DARK, margin: "0 0 2px" }}>Le soir</p>
-                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>Apr{"\u00e8"}s la journ{"\u00e9"}e<br/>sur le chantier</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>Après la journée<br/>sur le chantier</p>
               </div>
               <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
                 <p style={{ fontSize: "18px", margin: "0 0 4px" }}>🧠</p>
-                <p style={{ fontSize: "11px", fontWeight: 600, color: DARK, margin: "0 0 2px" }}>De m{"\u00e9"}moire</p>
-                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>D{"\u00e9"}tails oubli{"\u00e9"}s,<br/>approximations</p>
+                <p style={{ fontSize: "11px", fontWeight: 600, color: DARK, margin: "0 0 2px" }}>De mémoire</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>Détails oubliés,<br/>approximations</p>
               </div>
             </div>
           </Anim>
           <Anim delay={400} active={cur === 1}>
             <p style={{ fontSize: "12px", color: "#bbb", textAlign: "center", marginTop: "14px", fontStyle: "italic" }}>
-              2h de travail non pay{"\u00e9"}, sur du temps personnel.
+              2h de travail non payé, sur du temps personnel.
             </p>
           </Anim>
         </Slide>
@@ -190,16 +190,16 @@ function Carousel() {
         {/* SLIDE 3: PROCESS CASSE */}
         <Slide active={cur === 2} dir={dir}>
           <Anim delay={0} active={cur === 2}>
-            <Tag color={RED}>Process cass{"\u00e9"}</Tag>
+            <Tag color={RED}>Process cassé</Tag>
             <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>Le parcours du CR aujourd'hui</h2>
           </Anim>
           <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
             <Anim delay={80} active={cur === 2}>
-              <FlowStep icon="📝" label="Notes griffonn{"\u00e9"}es sur le chantier" sub="Carnet, t\u00e9l\u00e9phone, bout de papier" color={RED} accent={RED}/>
+              <FlowStep icon="📝" label="Notes griffonnées sur le chantier" sub="Carnet, t\u00e9l\u00e9phone, bout de papier" color={RED} accent={RED}/>
             </Anim>
             <Anim delay={140} active={cur === 2}><FlowArrow color={RED}/></Anim>
             <Anim delay={160} active={cur === 2}>
-              <FlowStep icon="📸" label="Photos en vrac dans le t{"\u00e9"}l{"\u00e9"}phone" sub="M\u00e9lang\u00e9es avec les photos perso" color={RED} bg="#FFF5F5" border="#fde2e2" accent={RED}/>
+              <FlowStep icon="📸" label="Photos en vrac dans le téléphone" sub="M\u00e9lang\u00e9es avec les photos perso" color={RED} bg="#FFF5F5" border="#fde2e2" accent={RED}/>
             </Anim>
             <Anim delay={220} active={cur === 2}><FlowArrow color={RED}/></Anim>
             <Anim delay={260} active={cur === 2}>
@@ -212,7 +212,7 @@ function Carousel() {
             <Anim delay={420} active={cur === 2}><FlowArrow color={RED}/></Anim>
             <Anim delay={460} active={cur === 2}>
               <div style={{ padding: "10px 14px", borderRadius: "10px", background: `${RED}08`, border: `1px solid ${RED}20`, textAlign: "center" }}>
-                <p style={{ fontSize: "12px", color: RED, fontWeight: 700, margin: 0 }}>Illisible 2 jours apr{"\u00e8"}s</p>
+                <p style={{ fontSize: "12px", color: RED, fontWeight: 700, margin: 0 }}>Illisible 2 jours après</p>
               </div>
             </Anim>
           </div>
@@ -222,8 +222,8 @@ function Carousel() {
         <Slide active={cur === 3} dir={dir}>
           <div style={{ textAlign: "center" }}>
             <Anim delay={0} active={cur === 3}>
-              <Tag color={RED}>Le d{"\u00e9"}lai</Tag>
-              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "18px", color: "#999", margin: "0 0 8px" }}>D{"\u00e9"}lai moyen d'envoi du CR</p>
+              <Tag color={RED}>Le délai</Tag>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "18px", color: "#999", margin: "0 0 8px" }}>Délai moyen d'envoi du CR</p>
             </Anim>
             <Anim delay={150} active={cur === 3}>
               <div style={{ background: "#FFF5F5", borderRadius: "14px", border: "1px solid #fde2e2", padding: "40px", marginBottom: "20px" }}>
@@ -233,7 +233,7 @@ function Carousel() {
             </Anim>
             <Anim delay={300} active={cur === 3}>
               <p style={{ fontSize: "14px", color: "#666", lineHeight: 1.6, margin: "0 0 16px" }}>
-                Entre la r{"\u00e9"}union et l'envoi du CR.<br/>5 jours o{"\u00f9"} les d{"\u00e9"}cisions flottent.
+                Entre la réunion et l'envoi du CR.<br/>5 jours où les décisions flottent.
               </p>
             </Anim>
             <Anim delay={450} active={cur === 3}>
@@ -250,11 +250,11 @@ function Carousel() {
         <Slide active={cur === 4} dir={dir}>
           <Anim delay={0} active={cur === 4}>
             <Tag color={GREEN}>La solution</Tag>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>CR envoy{"\u00e9"} le jour m{"\u00ea"}me</h2>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>CR envoyé le jour même</h2>
           </Anim>
           <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
             <Anim delay={80} active={cur === 4}>
-              <FlowStep icon="🎙️" label="Vocal en sortant de r{"\u00e9"}union" sub="2 minutes, dans la voiture" color={GREEN} accent={GREEN}/>
+              <FlowStep icon="🎙️" label="Vocal en sortant de réunion" sub="2 minutes, dans la voiture" color={GREEN} accent={GREEN}/>
             </Anim>
             <Anim delay={140} active={cur === 4}><FlowArrow color={GREEN}/></Anim>
             <Anim delay={160} active={cur === 4}>
@@ -274,7 +274,7 @@ function Carousel() {
               <div style={{ fontSize: "20px", color: GREEN }}>→</div>
               <div style={{ textAlign: "center", padding: "12px 16px", borderRadius: "10px", background: "#F0FAF4", border: "1px solid #d4edda" }}>
                 <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: GREEN, margin: "0 0 2px" }}>10 min</p>
-                <p style={{ fontSize: "9px", color: GREEN, margin: 0, fontWeight: 600 }}>APR{"\u00c8"}S</p>
+                <p style={{ fontSize: "9px", color: GREEN, margin: 0, fontWeight: 600 }}>APRÈS</p>
               </div>
             </div>
           </Anim>
@@ -288,12 +288,12 @@ function Carousel() {
             </Anim>
             <Anim delay={100} active={cur === 5}>
               <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "28px", color: DARK, lineHeight: 1.3, margin: "0 0 12px" }}>
-                {"\u00c0"} quelle heure vous faites vos CR ?
+                À quelle heure vous faites vos CR ?
               </h2>
             </Anim>
             <Anim delay={200} active={cur === 5}>
               <p style={{ fontSize: "14px", color: "#888", lineHeight: 1.6, margin: "0 0 28px" }}>
-                Si c'est apr{"\u00e8"}s 20h, c'est qu'il y a un probl{"\u00e8"}me de process.<br/>Pas un probl{"\u00e8"}me de motivation.
+                Si c'est après 20h, c'est qu'il y a un problème de process.<br/>Pas un problème de motivation.
               </p>
             </Anim>
             <Anim delay={300} active={cur === 5}>
@@ -343,7 +343,7 @@ function Carousel() {
         </div>
 
         <p style={{ position: "absolute", bottom: "52px", left: 0, right: 0, textAlign: "center", fontSize: "10px", color: "#ccc" }}>
-          {"\u2190"} {"\u2192"} pour naviguer
+          ← → pour naviguer
         </p>
       </div>
     </div>

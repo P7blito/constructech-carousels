@@ -162,7 +162,7 @@ function Carousel() {
             <Anim delay={160} active={cur === 0}>
               <div style={{ width: "40px", height: "1px", background: GOLD, margin: "0 auto 16px" }}/>
               <p style={{ fontSize: "clamp(18px, 4vw, 28px)", fontWeight: 500, color: GOLD, margin: "0 0 24px", lineHeight: 1.3, fontFamily: "'Instrument Serif', serif" }}>
-                Il manquait de visibilit{"\u00e9"}.
+                Il manquait de visibilité.
               </p>
             </Anim>
             <Anim delay={280} active={cur === 0}>
@@ -178,14 +178,14 @@ function Carousel() {
           <div style={{ textAlign: "center" }}>
             <Anim delay={0} active={cur === 1}>
               <Tag color={RED}>Le constat</Tag>
-              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 20px" }}>La marge r{"\u00e9"}elle</h2>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 20px" }}>La marge réelle</h2>
             </Anim>
             <Anim delay={100} active={cur === 1}>
               <div style={{ background: "#FFF5F5", borderRadius: "14px", border: "1px solid #fde2e2", padding: "28px", textAlign: "center", marginBottom: "20px" }}>
                 <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "64px", color: RED, margin: "0 0 4px", lineHeight: 1 }}>
                   <NumberTicker value={3.2} suffix="%" active={cur === 1} decimals={1}/>
                 </p>
-                <p style={{ fontSize: "13px", color: RED, fontWeight: 500, margin: 0 }}>marge nette r{"\u00e9"}elle</p>
+                <p style={{ fontSize: "13px", color: RED, fontWeight: 500, margin: 0 }}>marge nette réelle</p>
               </div>
             </Anim>
             <Anim delay={250} active={cur === 1}>
@@ -193,7 +193,7 @@ function Carousel() {
             </Anim>
             <Anim delay={400} active={cur === 1}>
               <p style={{ fontSize: "12px", color: "#bbb", marginTop: "14px", fontStyle: "italic" }}>
-                Le dirigeant pensait {"\u00ea"}tre {"\u00e0"} 7%. La r{"\u00e9"}alit{"\u00e9"} : 3,2%.
+                Le dirigeant pensait être à 7%. La réalité : 3,2%.
               </p>
             </Anim>
           </div>
@@ -203,7 +203,7 @@ function Carousel() {
         <Slide active={cur === 2} dir={dir}>
           <Anim delay={0} active={cur === 2}>
             <Tag color={RED}>Les fuites</Tag>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>O{"\u00f9"} passe l'argent ?</h2>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>Où passe l'argent ?</h2>
           </Anim>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
             {[
@@ -228,10 +228,10 @@ function Carousel() {
         <Slide active={cur === 3} dir={dir}>
           <div style={{ textAlign: "center", maxWidth: "460px", margin: "0 auto" }}>
             <Anim delay={0} active={cur === 3}>
-              <Tag>Le vrai probl{"\u00e8"}me</Tag>
+              <Tag>Le vrai problème</Tag>
             </Anim>
             <Anim delay={100} active={cur === 3}>
-              <div style={{ fontSize: "56px", color: `${GOLD}30`, margin: "0 0 12px", fontFamily: "Georgia, serif" }}>{"\u201c"}</div>
+              <div style={{ fontSize: "56px", color: `${GOLD}30`, margin: "0 0 12px", fontFamily: "Georgia, serif" }}>“</div>
               <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(20px, 4vw, 30px)", color: DARK, lineHeight: 1.35, margin: "0 0 20px", fontStyle: "italic" }}>
                 Ce n'est pas une grosse erreur.<br/>C'est l'accumulation<br/>de petites fuites.
               </p>
@@ -239,7 +239,7 @@ function Carousel() {
             </Anim>
             <Anim delay={250} active={cur === 3}>
               <p style={{ fontSize: "13px", color: "#999", lineHeight: 1.6, margin: "0 0 16px" }}>
-                Aucune de ces pertes n'est catastrophique seule.<br/>Mais ensemble, elles mangent la moiti{"\u00e9"} de votre marge.
+                Aucune de ces pertes n'est catastrophique seule.<br/>Mais ensemble, elles mangent la moitié de votre marge.
               </p>
             </Anim>
             <Anim delay={400} active={cur === 3}>
@@ -259,8 +259,8 @@ function Carousel() {
         <Slide active={cur === 4} dir={dir}>
           <div style={{ textAlign: "center" }}>
             <Anim delay={0} active={cur === 4}>
-              <Tag color={GREEN}>R{"\u00e9"}sultat</Tag>
-              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "18px", color: "#999", margin: "0 0 8px" }}>Marge nette apr{"\u00e8"}s correction</p>
+              <Tag color={GREEN}>Résultat</Tag>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "18px", color: "#999", margin: "0 0 8px" }}>Marge nette après correction</p>
             </Anim>
             <Anim delay={150} active={cur === 4}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "20px", margin: "20px 0" }}>
@@ -275,7 +275,7 @@ function Carousel() {
                   <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "52px", color: GREEN, margin: 0, lineHeight: 1 }}>
                     <NumberTicker value={9} suffix="%" active={cur === 4}/>
                   </p>
-                  <p style={{ fontSize: "11px", color: GREEN, fontWeight: 600, margin: "4px 0 0", textTransform: "uppercase", letterSpacing: "0.06em" }}>Apr{"\u00e8"}s</p>
+                  <p style={{ fontSize: "11px", color: GREEN, fontWeight: 600, margin: "4px 0 0", textTransform: "uppercase", letterSpacing: "0.06em" }}>Après</p>
                 </div>
               </div>
             </Anim>
@@ -287,7 +287,7 @@ function Carousel() {
             <Anim delay={450} active={cur === 4}>
               <div style={{ background: "#F0FAF4", borderRadius: "14px", border: "1px solid #d4edda", padding: "16px" }}>
                 <p style={{ fontSize: "13px", color: "#444", lineHeight: 1.6, margin: 0 }}>
-                  Pas de miracle. Juste de la visibilit{"\u00e9"} sur ce qui co{"\u00fb"}te vraiment.
+                  Pas de miracle. Juste de la visibilité sur ce qui coûte vraiment.
                 </p>
               </div>
             </Anim>
@@ -357,7 +357,7 @@ function Carousel() {
         </div>
 
         <p style={{ position: "absolute", bottom: "52px", left: 0, right: 0, textAlign: "center", fontSize: "10px", color: "#ccc" }}>
-          {"\u2190"} {"\u2192"} pour naviguer
+          ← → pour naviguer
         </p>
       </div>
     </div>
