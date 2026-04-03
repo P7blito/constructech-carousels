@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CR bi&egrave;re — Constructech Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F5F3EE; font-family: 'DM Sans', sans-serif; }
+    @keyframes fadeCount { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const GOLD = "#C8A84E";
+const DARK = "#1a1a2e";
+const RED = "#e74c3c";
+const GREEN = "#27ae60";
+const ORANGE = "#e67e22";
+
+function Slide({ active, dir, children }) {
+  return (
+    <div style={{
+      position: "absolute", inset: 0,
+      opacity: active ? 1 : 0,
+      transform: active ? "translateX(0)" : dir === "next" ? "translateX(40px)" : "translateX(-40px)",
+      transition: "all 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+      pointerEvents: active ? "auto" : "none",
+      display: "flex", flexDirection: "column", justifyContent: "center",
+      padding: "40px 36px", overflow: "hidden",
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function Anim({ children, delay = 0, active }) {
+  return (
+    <div style={{
+      opacity: active ? 1 : 0,
+      transform: active ? "translateY(0)" : "translateY(12px)",
+      transition: `all 0.35s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+const Tag = ({ children, color = GOLD }) => (
+  <span style={{
+    display: "inline-block", padding: "3px 12px", borderRadius: "100px",
+    fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
+    color, border: `1px solid ${color}30`, background: `${color}0A`, marginBottom: "16px",
+  }}>{children}</span>
+);
+
+const ChevronLeft = ({ size = 16, color = "#555" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+);
+const ChevronRight = ({ size = 16, color = "#555" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+);
+
+const FlowStep = ({ icon, label, sub, color = "#666", bg = "#FAF9F6", border = "#e8e5e0", accent = null }) => (
+  <div style={{ background: bg, borderRadius: "10px", border: `1px solid ${border}`, padding: "12px 14px", display: "flex", alignItems: "center", gap: "10px", position: "relative" }}>
+    {accent && <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: accent, borderRadius: "10px 0 0 10px" }}/>}
+    <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: `${color}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", flexShrink: 0 }}>{icon}</div>
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <p style={{ fontSize: "12px", fontWeight: 600, color: DARK, margin: 0 }}>{label}</p>
+      {sub && <p style={{ fontSize: "10px", color: "#999", margin: "2px 0 0" }}>{sub}</p>}
+    </div>
+  </div>
+);
+
+const FlowArrow = ({ color = "#ddd", label = null }) => (
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "3px 0" }}>
+    <svg width="12" height="16" viewBox="0 0 12 16"><path d="M6 0v12M2 9l4 4 4-4" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    {label && <span style={{ fontSize: "9px", color: "#bbb", marginTop: "1px" }}>{label}</span>}
+  </div>
+);
+
+function Carousel() {
+  const [cur, setCur] = useState(0);
+  const [dir, setDir] = useState("next");
+  const TOTAL = 6;
+
+  const go = (i) => { setDir(i > cur ? "next" : "prev"); setCur(i); };
+  const next = () => go(Math.min(cur + 1, TOTAL - 1));
+  const prev = () => go(Math.max(cur - 1, 0));
+
+  useEffect(() => {
+    const h = (e) => { if (e.key === "ArrowRight") next(); if (e.key === "ArrowLeft") prev(); };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [cur]);
+
+  return (
+    <div style={{
+      fontFamily: "'DM Sans', sans-serif",
+      background: "#F5F3EE",
+      minHeight: "100vh",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      padding: "20px",
+    }}>
+      <div style={{
+        width: "100%", maxWidth: "680px", aspectRatio: "4/5",
+        background: "#fff", borderRadius: "16px",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06)",
+        position: "relative", overflow: "hidden", border: "1px solid #e8e5e0",
+      }}>
+        {/* Progress bar */}
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "#eee", zIndex: 20 }}>
+          <div style={{ height: "100%", width: `${((cur + 1) / TOTAL) * 100}%`, background: GOLD, transition: "width 0.4s ease", borderRadius: "0 1px 1px 0" }}/>
+        </div>
+        <div style={{ position: "absolute", top: "14px", right: "18px", fontSize: "11px", color: "#bbb", zIndex: 20, fontVariantNumeric: "tabular-nums" }}>
+          {cur + 1}/{TOTAL}
+        </div>
+
+        {/* SLIDE 1: COVER */}
+        <Slide active={cur === 0} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "500px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 0}><Tag>Constructech Club</Tag></Anim>
+            <Anim delay={80} active={cur === 0}>
+              <div style={{ fontSize: "56px", color: `${GOLD}30`, margin: "0 0 8px", fontFamily: "Georgia, serif" }}>{"\u201c"}</div>
+              <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 400, color: DARK, lineHeight: 1.25, margin: "0 0 12px" }}>
+                Les CR ? Je me les fais le soir avec une petite bi{"\u00e8"}re.
+              </h1>
+            </Anim>
+            <Anim delay={160} active={cur === 0}>
+              <p style={{ fontSize: "40px", margin: "8px 0 16px" }}>🍺</p>
+            </Anim>
+            <Anim delay={280} active={cur === 0}>
+              <p style={{ fontSize: "13px", color: "#999", lineHeight: 1.6 }}>
+                Quand r{"\u00e9"}diger un compte-rendu<br/>devient une corvée de fin de journée.
+              </p>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 2: LA REALITE */}
+        <Slide active={cur === 1} dir={dir}>
+          <Anim delay={0} active={cur === 1}>
+            <Tag color={RED}>La r{"\u00e9"}alit{"\u00e9"}</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>Le temps r{"\u00e9"}el pass{"\u00e9"} sur les CR</h2>
+          </Anim>
+          <Anim delay={100} active={cur === 1}>
+            <div style={{ background: "#FFF5F5", borderRadius: "14px", border: "1px solid #fde2e2", padding: "20px", marginBottom: "14px" }}>
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "baseline", gap: "6px", marginBottom: "12px" }}>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "42px", color: RED, margin: 0, lineHeight: 1 }}>30-45</p>
+                <p style={{ fontSize: "16px", color: RED, fontWeight: 600, margin: 0 }}>min/CR</p>
+              </div>
+              <div style={{ display: "flex", justifyContent: "center", gap: "8px", flexWrap: "wrap" }}>
+                <span style={{ padding: "4px 10px", borderRadius: "6px", background: "#fff", border: "1px solid #fde2e2", fontSize: "11px", color: "#999" }}>{"\u00d7"} 3-4 CR/semaine</span>
+                <span style={{ padding: "4px 10px", borderRadius: "6px", background: "#fff", border: "1px solid #fde2e2", fontSize: "11px", color: "#999" }}>= ~2h/semaine le soir</span>
+              </div>
+            </div>
+          </Anim>
+          <Anim delay={250} active={cur === 1}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
+                <p style={{ fontSize: "18px", margin: "0 0 4px" }}>🌙</p>
+                <p style={{ fontSize: "11px", fontWeight: 600, color: DARK, margin: "0 0 2px" }}>Le soir</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>Apr{"\u00e8"}s la journ{"\u00e9"}e<br/>sur le chantier</p>
+              </div>
+              <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
+                <p style={{ fontSize: "18px", margin: "0 0 4px" }}>🧠</p>
+                <p style={{ fontSize: "11px", fontWeight: 600, color: DARK, margin: "0 0 2px" }}>De m{"\u00e9"}moire</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>D{"\u00e9"}tails oubli{"\u00e9"}s,<br/>approximations</p>
+              </div>
+            </div>
+          </Anim>
+          <Anim delay={400} active={cur === 1}>
+            <p style={{ fontSize: "12px", color: "#bbb", textAlign: "center", marginTop: "14px", fontStyle: "italic" }}>
+              2h de travail non pay{"\u00e9"}, sur du temps personnel.
+            </p>
+          </Anim>
+        </Slide>
+
+        {/* SLIDE 3: PROCESS CASSE */}
+        <Slide active={cur === 2} dir={dir}>
+          <Anim delay={0} active={cur === 2}>
+            <Tag color={RED}>Process cass{"\u00e9"}</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>Le parcours du CR aujourd'hui</h2>
+          </Anim>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
+            <Anim delay={80} active={cur === 2}>
+              <FlowStep icon="📝" label="Notes griffonn{"\u00e9"}es sur le chantier" sub="Carnet, t\u00e9l\u00e9phone, bout de papier" color={RED} accent={RED}/>
+            </Anim>
+            <Anim delay={140} active={cur === 2}><FlowArrow color={RED}/></Anim>
+            <Anim delay={160} active={cur === 2}>
+              <FlowStep icon="📸" label="Photos en vrac dans le t{"\u00e9"}l{"\u00e9"}phone" sub="M\u00e9lang\u00e9es avec les photos perso" color={RED} bg="#FFF5F5" border="#fde2e2" accent={RED}/>
+            </Anim>
+            <Anim delay={220} active={cur === 2}><FlowArrow color={RED}/></Anim>
+            <Anim delay={260} active={cur === 2}>
+              <FlowStep icon="🎙️" label="Vocaux WhatsApp" sub="Envoy\u00e9s au chef, jamais retranscrits" color={RED} bg="#FFF5F5" border="#fde2e2" accent={RED}/>
+            </Anim>
+            <Anim delay={320} active={cur === 2}><FlowArrow color={RED}/></Anim>
+            <Anim delay={360} active={cur === 2}>
+              <FlowStep icon="💻" label="Recopiage dans Word le soir" sub="Mise en forme, copier-coller..." color={RED} bg="#FFF5F5" border="#fde2e2" accent={RED}/>
+            </Anim>
+            <Anim delay={420} active={cur === 2}><FlowArrow color={RED}/></Anim>
+            <Anim delay={460} active={cur === 2}>
+              <div style={{ padding: "10px 14px", borderRadius: "10px", background: `${RED}08`, border: `1px solid ${RED}20`, textAlign: "center" }}>
+                <p style={{ fontSize: "12px", color: RED, fontWeight: 700, margin: 0 }}>Illisible 2 jours apr{"\u00e8"}s</p>
+              </div>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 4: DELAI */}
+        <Slide active={cur === 3} dir={dir}>
+          <div style={{ textAlign: "center" }}>
+            <Anim delay={0} active={cur === 3}>
+              <Tag color={RED}>Le d{"\u00e9"}lai</Tag>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "18px", color: "#999", margin: "0 0 8px" }}>D{"\u00e9"}lai moyen d'envoi du CR</p>
+            </Anim>
+            <Anim delay={150} active={cur === 3}>
+              <div style={{ background: "#FFF5F5", borderRadius: "14px", border: "1px solid #fde2e2", padding: "40px", marginBottom: "20px" }}>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "80px", color: RED, margin: "0 0 4px", lineHeight: 1 }}>5</p>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "28px", color: RED, margin: 0 }}>jours</p>
+              </div>
+            </Anim>
+            <Anim delay={300} active={cur === 3}>
+              <p style={{ fontSize: "14px", color: "#666", lineHeight: 1.6, margin: "0 0 16px" }}>
+                Entre la r{"\u00e9"}union et l'envoi du CR.<br/>5 jours o{"\u00f9"} les d{"\u00e9"}cisions flottent.
+              </p>
+            </Anim>
+            <Anim delay={450} active={cur === 3}>
+              <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
+                {["Malentendus", "Oublis", "Litiges"].map((t, i) => (
+                  <span key={i} style={{ padding: "5px 10px", borderRadius: "6px", background: "#FFF5F5", border: "1px solid #fde2e2", fontSize: "10px", color: RED, fontWeight: 600 }}>{t}</span>
+                ))}
+              </div>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 5: SOLUTION */}
+        <Slide active={cur === 4} dir={dir}>
+          <Anim delay={0} active={cur === 4}>
+            <Tag color={GREEN}>La solution</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>CR envoy{"\u00e9"} le jour m{"\u00ea"}me</h2>
+          </Anim>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
+            <Anim delay={80} active={cur === 4}>
+              <FlowStep icon="🎙️" label="Vocal en sortant de r{"\u00e9"}union" sub="2 minutes, dans la voiture" color={GREEN} accent={GREEN}/>
+            </Anim>
+            <Anim delay={140} active={cur === 4}><FlowArrow color={GREEN}/></Anim>
+            <Anim delay={160} active={cur === 4}>
+              <FlowStep icon="🤖" label="IA transcrit et structure" sub="Reformulation propre, points cl\u00e9s extraits" color="#3498db" accent="#3498db"/>
+            </Anim>
+            <Anim delay={220} active={cur === 4}><FlowArrow color={GREEN}/></Anim>
+            <Anim delay={260} active={cur === 4}>
+              <FlowStep icon="✅" label="CR propre en 10 minutes" sub="Relu, valid\u00e9, envoy\u00e9 le jour m\u00eame" color={GREEN} bg="#F0FAF4" border="#d4edda" accent={GREEN}/>
+            </Anim>
+          </div>
+          <Anim delay={350} active={cur === 4}>
+            <div style={{ marginTop: "16px", display: "flex", alignItems: "center", justifyContent: "center", gap: "16px" }}>
+              <div style={{ textAlign: "center", padding: "12px 16px", borderRadius: "10px", background: "#FFF5F5", border: "1px solid #fde2e2" }}>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: RED, margin: "0 0 2px" }}>45 min</p>
+                <p style={{ fontSize: "9px", color: RED, margin: 0, fontWeight: 600 }}>AVANT</p>
+              </div>
+              <div style={{ fontSize: "20px", color: GREEN }}>→</div>
+              <div style={{ textAlign: "center", padding: "12px 16px", borderRadius: "10px", background: "#F0FAF4", border: "1px solid #d4edda" }}>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: GREEN, margin: "0 0 2px" }}>10 min</p>
+                <p style={{ fontSize: "9px", color: GREEN, margin: 0, fontWeight: 600 }}>APR{"\u00c8"}S</p>
+              </div>
+            </div>
+          </Anim>
+        </Slide>
+
+        {/* SLIDE 6: CTA */}
+        <Slide active={cur === 5} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "440px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 5}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: `${GOLD}15`, border: `1px solid ${GOLD}30`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", fontSize: "22px" }}>⏰</div>
+            </Anim>
+            <Anim delay={100} active={cur === 5}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "28px", color: DARK, lineHeight: 1.3, margin: "0 0 12px" }}>
+                {"\u00c0"} quelle heure vous faites vos CR ?
+              </h2>
+            </Anim>
+            <Anim delay={200} active={cur === 5}>
+              <p style={{ fontSize: "14px", color: "#888", lineHeight: 1.6, margin: "0 0 28px" }}>
+                Si c'est apr{"\u00e8"}s 20h, c'est qu'il y a un probl{"\u00e8"}me de process.<br/>Pas un probl{"\u00e8"}me de motivation.
+              </p>
+            </Anim>
+            <Anim delay={300} active={cur === 5}>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: "8px",
+                padding: "14px 32px", borderRadius: "100px",
+                background: GOLD, color: "#fff", fontSize: "14px", fontWeight: 600,
+              }}>
+                DM ouverts — constructech.club
+              </div>
+            </Anim>
+            <Anim delay={450} active={cur === 5}>
+              <div style={{ marginTop: "24px", display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
+                {["CR automatis\u00e9s", "IA terrain", "Process BTP"].map((t, i) => (
+                  <span key={i} style={{ padding: "5px 10px", borderRadius: "6px", background: "#FAF9F6", border: "1px solid #e8e5e0", fontSize: "10px", color: "#888", fontWeight: 500 }}>{t}</span>
+                ))}
+              </div>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* Navigation */}
+        <div style={{
+          position: "absolute", bottom: "16px", left: 0, right: 0,
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
+          zIndex: 20,
+        }}>
+          <button onClick={prev} style={{
+            width: "32px", height: "32px", borderRadius: "50%", border: "1px solid #e8e5e0",
+            background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            opacity: cur === 0 ? 0.3 : 1, transition: "opacity 0.2s",
+          }}><ChevronLeft/></button>
+          <div style={{ display: "flex", gap: "4px" }}>
+            {Array.from({ length: TOTAL }, (_, i) => (
+              <button key={i} onClick={() => go(i)} style={{
+                width: i === cur ? "16px" : "6px", height: "6px", borderRadius: "3px",
+                background: i === cur ? GOLD : "#ddd", border: "none", cursor: "pointer",
+                transition: "all 0.3s ease",
+              }}/>
+            ))}
+          </div>
+          <button onClick={next} style={{
+            width: "32px", height: "32px", borderRadius: "50%", border: "1px solid #e8e5e0",
+            background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            opacity: cur === TOTAL - 1 ? 0.3 : 1, transition: "opacity 0.2s",
+          }}><ChevronRight/></button>
+        </div>
+
+        <p style={{ position: "absolute", bottom: "52px", left: 0, right: 0, textAlign: "center", fontSize: "10px", color: "#ccc" }}>
+          {"\u2190"} {"\u2192"} pour naviguer
+        </p>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Carousel/>);
+</script>
+</body>
+</html>

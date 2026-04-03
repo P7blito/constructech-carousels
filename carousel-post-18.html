@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Premi&egrave;re r&eacute;union m&eacute;treurs — Constructech Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F5F3EE; font-family: 'DM Sans', sans-serif; }
+    @keyframes fadeCount { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const GOLD = "#C8A84E";
+const DARK = "#1a1a2e";
+const RED = "#e74c3c";
+const GREEN = "#27ae60";
+const ORANGE = "#e67e22";
+
+function NumberTicker({ value, suffix = "", prefix = "", duration = 1200, active }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    if (!active) { setDisplay(0); return; }
+    const num = parseInt(value);
+    if (isNaN(num)) return;
+    const t0 = Date.now();
+    const tick = () => {
+      const p = Math.min((Date.now() - t0) / duration, 1);
+      setDisplay(Math.round((1 - Math.pow(1 - p, 3)) * num));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [active, value, duration]);
+  return <span>{prefix}{display.toLocaleString("fr-FR")}{suffix}</span>;
+}
+
+function Slide({ active, dir, children }) {
+  return (
+    <div style={{
+      position: "absolute", inset: 0,
+      opacity: active ? 1 : 0,
+      transform: active ? "translateX(0)" : dir === "next" ? "translateX(40px)" : "translateX(-40px)",
+      transition: "all 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+      pointerEvents: active ? "auto" : "none",
+      display: "flex", flexDirection: "column", justifyContent: "center",
+      padding: "40px 36px", overflow: "hidden",
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function Anim({ children, delay = 0, active }) {
+  return (
+    <div style={{
+      opacity: active ? 1 : 0,
+      transform: active ? "translateY(0)" : "translateY(12px)",
+      transition: `all 0.35s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+const Tag = ({ children, color = GOLD }) => (
+  <span style={{
+    display: "inline-block", padding: "3px 12px", borderRadius: "100px",
+    fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
+    color, border: `1px solid ${color}30`, background: `${color}0A`, marginBottom: "16px",
+  }}>{children}</span>
+);
+
+const ChevronLeft = ({ size = 16, color = "#555" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+);
+const ChevronRight = ({ size = 16, color = "#555" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+);
+
+function Carousel() {
+  const [cur, setCur] = useState(0);
+  const [dir, setDir] = useState("next");
+  const TOTAL = 6;
+
+  const go = (i) => { setDir(i > cur ? "next" : "prev"); setCur(i); };
+  const next = () => go(Math.min(cur + 1, TOTAL - 1));
+  const prev = () => go(Math.max(cur - 1, 0));
+
+  useEffect(() => {
+    const h = (e) => { if (e.key === "ArrowRight") next(); if (e.key === "ArrowLeft") prev(); };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [cur]);
+
+  return (
+    <div style={{
+      fontFamily: "'DM Sans', sans-serif",
+      background: "#F5F3EE",
+      minHeight: "100vh",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      padding: "20px",
+    }}>
+      <div style={{
+        width: "100%", maxWidth: "680px", aspectRatio: "4/5",
+        background: "#fff", borderRadius: "16px",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06)",
+        position: "relative", overflow: "hidden", border: "1px solid #e8e5e0",
+      }}>
+        {/* Progress bar */}
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "#eee", zIndex: 20 }}>
+          <div style={{ height: "100%", width: `${((cur + 1) / TOTAL) * 100}%`, background: GOLD, transition: "width 0.4s ease", borderRadius: "0 1px 1px 0" }}/>
+        </div>
+        <div style={{ position: "absolute", top: "14px", right: "18px", fontSize: "11px", color: "#bbb", zIndex: 20, fontVariantNumeric: "tabular-nums" }}>
+          {cur + 1}/{TOTAL}
+        </div>
+
+        {/* SLIDE 1: COVER */}
+        <Slide active={cur === 0} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "500px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 0}><Tag>Constructech Club</Tag></Anim>
+            <Anim delay={80} active={cur === 0}>
+              <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(24px, 4.5vw, 36px)", fontWeight: 400, color: DARK, lineHeight: 1.15, margin: "0 0 16px" }}>
+                Ma premi{"\u00e8"}re r{"\u00e9"}union a dur{"\u00e9"} 3 heures.
+              </h1>
+            </Anim>
+            <Anim delay={160} active={cur === 0}>
+              <div style={{ width: "40px", height: "1px", background: GOLD, margin: "0 auto 16px" }}/>
+              <p style={{ fontSize: "clamp(16px, 3vw, 22px)", fontWeight: 500, color: GOLD, margin: "0 0 24px", lineHeight: 1.3, fontFamily: "'Instrument Serif', serif" }}>
+                J'{"\u00e9"}tais stagiaire.
+              </p>
+            </Anim>
+            <Anim delay={280} active={cur === 0}>
+              <p style={{ fontSize: "13px", color: "#999", lineHeight: 1.6 }}>
+                Une histoire vraie qui montre pourquoi<br/>les m{"\u00e9"}treurs sont essentiels.
+              </p>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 2: LA SCENE */}
+        <Slide active={cur === 1} dir={dir}>
+          <Anim delay={0} active={cur === 1}>
+            <Tag>La sc{"\u00e8"}ne</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>Salle de r{"\u00e9"}union, un mardi matin</h2>
+          </Anim>
+          <Anim delay={100} active={cur === 1}>
+            <div style={{ background: "#FAF9F6", borderRadius: "14px", border: "1px solid #e8e5e0", padding: "24px", marginBottom: "16px" }}>
+              <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginBottom: "16px", flexWrap: "wrap" }}>
+                {["👷 Chef chantier", "📐 Archi", "🏗️ BE Structure", "📊 OPC", "🧑‍💻 Moi (stagiaire)"].map((p, i) => (
+                  <span key={i} style={{ padding: "6px 12px", borderRadius: "8px", background: "#fff", border: "1px solid #e8e5e0", fontSize: "11px", color: DARK, fontWeight: 500 }}>{p}</span>
+                ))}
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <p style={{ fontSize: "12px", color: "#888", lineHeight: 1.6 }}>
+                  5 personnes autour d'une table.<br/>Plans {"\u00e9"}tal{"\u00e9"}s. Caf{"\u00e9"} froid.
+                </p>
+              </div>
+            </div>
+          </Anim>
+          <Anim delay={250} active={cur === 1}>
+            <div style={{ padding: "14px 18px", borderRadius: "10px", background: `${GOLD}08`, border: `1px solid ${GOLD}20`, textAlign: "center" }}>
+              <p style={{ fontSize: "13px", color: DARK, fontWeight: 500, margin: 0 }}>
+                3 heures de d{"\u00e9"}bats techniques.<br/>
+                <span style={{ color: "#999", fontWeight: 400 }}>Et moi, je prenais des notes sans comprendre la moiti{"\u00e9"}.</span>
+              </p>
+            </div>
+          </Anim>
+        </Slide>
+
+        {/* SLIDE 3: LE PROBLEME */}
+        <Slide active={cur === 2} dir={dir}>
+          <Anim delay={0} active={cur === 2}>
+            <Tag color={RED}>Le probl{"\u00e8"}me</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>Ce qui est sorti de cette r{"\u00e9"}union</h2>
+          </Anim>
+          <Anim delay={100} active={cur === 2}>
+            <div style={{ background: "#FFF5F5", borderRadius: "14px", border: "1px solid #fde2e2", padding: "24px", textAlign: "center", marginBottom: "14px" }}>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "18px", color: RED, lineHeight: 1.4, margin: "0 0 12px" }}>
+                Z{"\u00e9"}ro contreventement.<br/>Zone sismique.
+              </p>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "28px", color: RED, fontWeight: 400, margin: 0 }}>
+                Le b{"\u00e2"}timent ne tenait pas debout.
+              </p>
+            </div>
+          </Anim>
+          <Anim delay={250} active={cur === 2}>
+            <div style={{ background: `${ORANGE}08`, borderRadius: "10px", border: `1px solid ${ORANGE}20`, padding: "14px", textAlign: "center", marginBottom: "12px" }}>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "32px", color: ORANGE, margin: "0 0 4px" }}>3 mois</p>
+              <p style={{ fontSize: "12px", color: ORANGE, fontWeight: 500, margin: 0 }}>avant le d{"\u00e9"}marrage du chantier</p>
+            </div>
+          </Anim>
+          <Anim delay={400} active={cur === 2}>
+            <p style={{ fontSize: "12px", color: "#bbb", textAlign: "center", fontStyle: "italic" }}>
+              Tout le monde avait regard{"\u00e9"} les plans.<br/>Personne n'avait v{"\u00e9"}rifi{"\u00e9"} la structure.
+            </p>
+          </Anim>
+        </Slide>
+
+        {/* SLIDE 4: LA CAUSE */}
+        <Slide active={cur === 3} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "460px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 3}>
+              <Tag color={ORANGE}>La cause</Tag>
+            </Anim>
+            <Anim delay={100} active={cur === 3}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "24px", color: DARK, lineHeight: 1.3, margin: "0 0 20px" }}>
+                Personne n'avait v{"\u00e9"}rifi{"\u00e9"}
+              </h2>
+            </Anim>
+            <Anim delay={200} active={cur === 3}>
+              <div style={{ background: "#FAF9F6", borderRadius: "14px", border: "1px solid #e8e5e0", padding: "24px", marginBottom: "16px" }}>
+                <p style={{ fontSize: "14px", color: "#666", lineHeight: 1.7, margin: 0 }}>
+                  L'architecte pensait que le BE avait v{"\u00e9"}rifi{"\u00e9"}.<br/>
+                  Le BE pensait que c'{"\u00e9"}tait valid{"\u00e9"} par l'archi.<br/>
+                  Le chef de chantier attendait les plans d{"\u00e9"}finitifs.<br/>
+                  <strong style={{ color: DARK }}>R{"\u00e9"}sultat : personne n'avait fait le m{"\u00e9"}tr{"\u00e9"}.</strong>
+                </p>
+              </div>
+            </Anim>
+            <Anim delay={350} active={cur === 3}>
+              <div style={{ padding: "16px", borderRadius: "10px", background: `${GOLD}08`, border: `1px solid ${GOLD}20` }}>
+                <p style={{ fontSize: "13px", color: DARK, fontWeight: 500, margin: 0 }}>
+                  Un m{"\u00e9"}treur aurait rep{"\u00e9"}r{"\u00e9"} l'incoh{"\u00e9"}rence<br/>d{"\u00e8"}s la premi{"\u00e8"}re lecture des plans.
+                </p>
+              </div>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 5: LE CHIFFRE */}
+        <Slide active={cur === 4} dir={dir}>
+          <div style={{ textAlign: "center" }}>
+            <Anim delay={0} active={cur === 4}>
+              <Tag>Le chiffre</Tag>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "18px", color: "#999", margin: "0 0 16px" }}>{"\u00c9"}conomistes de la construction en France</p>
+            </Anim>
+            <Anim delay={150} active={cur === 4}>
+              <div style={{ background: `${GOLD}08`, borderRadius: "14px", border: `1px solid ${GOLD}20`, padding: "32px", marginBottom: "20px" }}>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "64px", color: GOLD, margin: "0 0 4px", lineHeight: 1 }}>
+                  <NumberTicker value={2500} active={cur === 4}/>
+                </p>
+                <p style={{ fontSize: "13px", color: GOLD, fontWeight: 500, margin: 0 }}>{"\u00e9"}conomistes de la construction</p>
+              </div>
+            </Anim>
+            <Anim delay={300} active={cur === 4}>
+              <p style={{ fontSize: "13px", color: "#888", lineHeight: 1.6, margin: "0 0 16px" }}>
+                Seulement 2 500 pour tout le pays.<br/>Un m{"\u00e9"}tier m{"\u00e9"}connu, sous-estim{"\u00e9"}, et pourtant critique.
+              </p>
+            </Anim>
+            <Anim delay={450} active={cur === 4}>
+              <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
+                {["V\u00e9rification plans", "Chiffrage", "D\u00e9tection erreurs"].map((t, i) => (
+                  <span key={i} style={{ padding: "5px 10px", borderRadius: "6px", background: "#FAF9F6", border: "1px solid #e8e5e0", fontSize: "10px", color: "#888", fontWeight: 500 }}>{t}</span>
+                ))}
+              </div>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 6: CTA */}
+        <Slide active={cur === 5} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "440px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 5}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: `${GOLD}15`, border: `1px solid ${GOLD}30`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", fontSize: "22px" }}>💬</div>
+            </Anim>
+            <Anim delay={100} active={cur === 5}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "28px", color: DARK, lineHeight: 1.3, margin: "0 0 12px" }}>
+                Et toi, ta premi{"\u00e8"}re r{"\u00e9"}union de chantier ?
+              </h2>
+            </Anim>
+            <Anim delay={200} active={cur === 5}>
+              <p style={{ fontSize: "14px", color: "#888", lineHeight: 1.6, margin: "0 0 28px" }}>
+                On a tous une histoire de r{"\u00e9"}union qui a d{"\u00e9"}rap{"\u00e9"}.<br/>Raconte la tienne en commentaire.
+              </p>
+            </Anim>
+            <Anim delay={300} active={cur === 5}>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: "8px",
+                padding: "14px 32px", borderRadius: "100px",
+                background: GOLD, color: "#fff", fontSize: "14px", fontWeight: 600,
+              }}>
+                Reposte avec ton exp{"\u00e9"}rience
+              </div>
+            </Anim>
+            <Anim delay={450} active={cur === 5}>
+              <div style={{ marginTop: "24px", display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
+                {["M\u00e9treurs", "BTP", "Terrain"].map((t, i) => (
+                  <span key={i} style={{ padding: "5px 10px", borderRadius: "6px", background: "#FAF9F6", border: "1px solid #e8e5e0", fontSize: "10px", color: "#888", fontWeight: 500 }}>{t}</span>
+                ))}
+              </div>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* Navigation */}
+        <div style={{
+          position: "absolute", bottom: "16px", left: 0, right: 0,
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
+          zIndex: 20,
+        }}>
+          <button onClick={prev} style={{
+            width: "32px", height: "32px", borderRadius: "50%", border: "1px solid #e8e5e0",
+            background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            opacity: cur === 0 ? 0.3 : 1, transition: "opacity 0.2s",
+          }}><ChevronLeft/></button>
+          <div style={{ display: "flex", gap: "4px" }}>
+            {Array.from({ length: TOTAL }, (_, i) => (
+              <button key={i} onClick={() => go(i)} style={{
+                width: i === cur ? "16px" : "6px", height: "6px", borderRadius: "3px",
+                background: i === cur ? GOLD : "#ddd", border: "none", cursor: "pointer",
+                transition: "all 0.3s ease",
+              }}/>
+            ))}
+          </div>
+          <button onClick={next} style={{
+            width: "32px", height: "32px", borderRadius: "50%", border: "1px solid #e8e5e0",
+            background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            opacity: cur === TOTAL - 1 ? 0.3 : 1, transition: "opacity 0.2s",
+          }}><ChevronRight/></button>
+        </div>
+
+        <p style={{ position: "absolute", bottom: "52px", left: 0, right: 0, textAlign: "center", fontSize: "10px", color: "#ccc" }}>
+          {"\u2190"} {"\u2192"} pour naviguer
+        </p>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Carousel/>);
+</script>
+</body>
+</html>

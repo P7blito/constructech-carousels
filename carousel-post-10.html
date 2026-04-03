@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sante mentale BTP — Constructech Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F5F3EE; font-family: 'DM Sans', sans-serif; }
+    @keyframes fadeCount { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const GOLD = "#C8A84E";
+const DARK = "#1a1a2e";
+const RED = "#e74c3c";
+const GREEN = "#27ae60";
+const ORANGE = "#e67e22";
+
+function NumberTicker({ value, suffix = "", prefix = "", duration = 1200, active }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    if (!active) { setDisplay(0); return; }
+    const num = parseInt(value);
+    if (isNaN(num)) return;
+    const t0 = Date.now();
+    const tick = () => {
+      const p = Math.min((Date.now() - t0) / duration, 1);
+      setDisplay(Math.round((1 - Math.pow(1 - p, 3)) * num));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [active, value, duration]);
+  return <span>{prefix}{display.toLocaleString("fr-FR")}{suffix}</span>;
+}
+
+function Slide({ active, dir, children }) {
+  return (
+    <div style={{
+      position: "absolute", inset: 0,
+      opacity: active ? 1 : 0,
+      transform: active ? "translateX(0)" : dir === "next" ? "translateX(40px)" : "translateX(-40px)",
+      transition: "all 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+      pointerEvents: active ? "auto" : "none",
+      display: "flex", flexDirection: "column", justifyContent: "center",
+      padding: "40px 36px", overflow: "hidden",
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function Anim({ children, delay = 0, active }) {
+  return (
+    <div style={{
+      opacity: active ? 1 : 0,
+      transform: active ? "translateY(0)" : "translateY(12px)",
+      transition: `all 0.35s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+const Tag = ({ children, color = GOLD }) => (
+  <span style={{
+    display: "inline-block", padding: "3px 12px", borderRadius: "100px",
+    fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
+    color, border: `1px solid ${color}30`, background: `${color}0A`, marginBottom: "16px",
+  }}>{children}</span>
+);
+
+const ChevronLeft = ({ size = 16, color = "#555" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+);
+const ChevronRight = ({ size = 16, color = "#555" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+);
+
+function SanteCarousel() {
+  const [cur, setCur] = useState(0);
+  const [dir, setDir] = useState("next");
+  const TOTAL = 5;
+
+  const go = (i) => { setDir(i > cur ? "next" : "prev"); setCur(i); };
+  const next = () => go(Math.min(cur + 1, TOTAL - 1));
+  const prev = () => go(Math.max(cur - 1, 0));
+
+  useEffect(() => {
+    const h = (e) => { if (e.key === "ArrowRight") next(); if (e.key === "ArrowLeft") prev(); };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [cur]);
+
+  return (
+    <div style={{
+      fontFamily: "'DM Sans', sans-serif",
+      background: "#F5F3EE",
+      minHeight: "100vh",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      padding: "20px",
+    }}>
+      <div style={{
+        width: "100%", maxWidth: "680px", aspectRatio: "4/5",
+        background: "#fff", borderRadius: "16px",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06)",
+        position: "relative", overflow: "hidden", border: "1px solid #e8e5e0",
+      }}>
+        {/* Progress bar */}
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "#eee", zIndex: 20 }}>
+          <div style={{ height: "100%", width: `${((cur + 1) / TOTAL) * 100}%`, background: GOLD, transition: "width 0.4s ease", borderRadius: "0 1px 1px 0" }}/>
+        </div>
+        <div style={{ position: "absolute", top: "14px", right: "18px", fontSize: "11px", color: "#bbb", zIndex: 20, fontVariantNumeric: "tabular-nums" }}>
+          {cur + 1}/{TOTAL}
+        </div>
+
+        {/* SLIDE 1: COVER — Citation gold */}
+        <Slide active={cur === 0} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "480px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 0}><Tag>Constructech Club</Tag></Anim>
+            <Anim delay={100} active={cur === 0}>
+              <div style={{ width: "3px", height: "32px", background: GOLD, margin: "0 auto 20px", borderRadius: "2px" }}/>
+            </Anim>
+            <Anim delay={200} active={cur === 0}>
+              <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(26px, 5.5vw, 42px)", fontWeight: 400, color: GOLD, lineHeight: 1.2, margin: "0 0 20px", fontStyle: "italic" }}>
+                "Personne ne peut le faire a ma place."
+              </h1>
+            </Anim>
+            <Anim delay={350} active={cur === 0}>
+              <div style={{ width: "3px", height: "32px", background: GOLD, margin: "0 auto 20px", borderRadius: "2px" }}/>
+            </Anim>
+            <Anim delay={450} active={cur === 0}>
+              <p style={{ fontSize: "14px", color: "#999", lineHeight: 1.6 }}>
+                Cette phrase, on l'entend dans chaque audit.<br/>Elle cache un probleme plus profond que l'organisation.
+              </p>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 2: LES CHIFFRES — 4 cards */}
+        <Slide active={cur === 1} dir={dir}>
+          <Anim delay={0} active={cur === 1}>
+            <Tag color={ORANGE}>Les chiffres</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 20px" }}>Ce qu'on ne dit pas assez</h2>
+          </Anim>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            {[
+              { val: "43", suffix: "%", label: "des dirigeants BTP en situation d'epuisement professionnel", color: RED, delay: 100 },
+              { val: "50", suffix: "h+", label: "par semaine en moyenne pour un patron de PME BTP", color: ORANGE, delay: 180 },
+              { val: "60", suffix: "%", label: "n'ont jamais pris plus de 2 semaines consecutives de conge", color: RED, delay: 260 },
+              { val: "80", suffix: "%", label: "disent que l'entreprise ne tournerait pas sans eux", color: DARK, delay: 340 },
+            ].map((item, i) => (
+              <Anim key={i} delay={item.delay} active={cur === 1}>
+                <div style={{ background: "#FAF9F6", borderRadius: "12px", border: "1px solid #e8e5e0", padding: "16px", textAlign: "center" }}>
+                  <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "32px", color: item.color, margin: "0 0 6px", lineHeight: 1 }}>
+                    <NumberTicker value={item.val} suffix={item.suffix} active={cur === 1}/>
+                  </p>
+                  <p style={{ fontSize: "10px", color: "#888", margin: 0, lineHeight: 1.3 }}>{item.label}</p>
+                </div>
+              </Anim>
+            ))}
+          </div>
+        </Slide>
+
+        {/* SLIDE 3: LE PIEGE */}
+        <Slide active={cur === 2} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "460px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 2}>
+              <Tag color={RED}>Le piege</Tag>
+            </Anim>
+            <Anim delay={100} active={cur === 2}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "24px", color: DARK, margin: "0 0 20px", lineHeight: 1.3 }}>
+                Le process n'existe que<br/>dans leur tete.
+              </h2>
+            </Anim>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "16px" }}>
+              {[
+                { icon: "🧠", label: "Le planning est dans leur tete" },
+                { icon: "📱", label: "Les contacts sont dans leur telephone" },
+                { icon: "📋", label: "Les prix sont dans leur memoire" },
+                { icon: "🔑", label: "Les acces sont dans leurs mails" },
+              ].map((item, i) => (
+                <Anim key={i} delay={150 + i * 80} active={cur === 2}>
+                  <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
+                    <p style={{ fontSize: "24px", margin: "0 0 6px" }}>{item.icon}</p>
+                    <p style={{ fontSize: "11px", color: "#666", margin: 0, lineHeight: 1.3 }}>{item.label}</p>
+                  </div>
+                </Anim>
+              ))}
+            </div>
+            <Anim delay={500} active={cur === 2}>
+              <p style={{ fontSize: "13px", color: RED, fontWeight: 600, lineHeight: 1.5 }}>
+                Si le dirigeant s'arrete, tout s'arrete.<br/>Ce n'est pas de la gestion. C'est un piege.
+              </p>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 4: LA SOLUTION */}
+        <Slide active={cur === 3} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "460px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 3}>
+              <Tag color={GREEN}>La sortie</Tag>
+            </Anim>
+            <Anim delay={100} active={cur === 3}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "28px", color: DARK, margin: "0 0 24px", lineHeight: 1.2 }}>
+                Documenter.<br/>Structurer.<br/>Automatiser.
+              </h2>
+            </Anim>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", textAlign: "left" }}>
+              {[
+                { step: "1", title: "Documenter", desc: "Ecrire ce qui n'existe que dans la tete du dirigeant. Process, contacts, prix, acces.", color: "#3498db" },
+                { step: "2", title: "Structurer", desc: "Organiser pour que n'importe qui puisse suivre. Pas besoin de tout reinventer.", color: GOLD },
+                { step: "3", title: "Automatiser", desc: "Deleguer au systeme ce qui peut l'etre. Alertes, relances, suivi, reporting.", color: GREEN },
+              ].map((item, i) => (
+                <Anim key={i} delay={200 + i * 120} active={cur === 3}>
+                  <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", background: "#FAF9F6", borderRadius: "12px", border: "1px solid #e8e5e0", padding: "16px" }}>
+                    <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: `${item.color}15`, border: `1px solid ${item.color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 700, color: item.color, flexShrink: 0 }}>{item.step}</div>
+                    <div>
+                      <p style={{ fontSize: "14px", fontWeight: 700, color: DARK, margin: "0 0 2px" }}>{item.title}</p>
+                      <p style={{ fontSize: "11px", color: "#888", margin: 0, lineHeight: 1.4 }}>{item.desc}</p>
+                    </div>
+                  </div>
+                </Anim>
+              ))}
+            </div>
+            <Anim delay={600} active={cur === 3}>
+              <p style={{ fontSize: "12px", color: "#bbb", marginTop: "16px", fontStyle: "italic" }}>
+                L'objectif : que le dirigeant puisse etre absent une semaine sans que rien ne s'ecroule.
+              </p>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 5: CHUTE — No CTA */}
+        <Slide active={cur === 4} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "460px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 4}>
+              <div style={{ width: "3px", height: "24px", background: GOLD, margin: "0 auto 24px", borderRadius: "2px" }}/>
+            </Anim>
+            <Anim delay={150} active={cur === 4}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(26px, 5.5vw, 40px)", color: DARK, lineHeight: 1.2, margin: "0 0 24px" }}>
+                C'est pas de la tech.
+              </h2>
+            </Anim>
+            <Anim delay={350} active={cur === 4}>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(30px, 6vw, 48px)", color: GOLD, lineHeight: 1.1, margin: "0 0 32px" }}>
+                C'est de la survie.
+              </p>
+            </Anim>
+            <Anim delay={550} active={cur === 4}>
+              <div style={{ width: "3px", height: "24px", background: GOLD, margin: "0 auto 24px", borderRadius: "2px" }}/>
+            </Anim>
+            <Anim delay={700} active={cur === 4}>
+              <p style={{ fontSize: "13px", color: "#999", lineHeight: 1.6 }}>
+                Si tu te reconnais dans ce post,<br/>tu n'es pas seul. Et il y a une sortie.
+              </p>
+            </Anim>
+            <Anim delay={850} active={cur === 4}>
+              <p style={{ fontSize: "11px", color: "#bbb", marginTop: "20px" }}>
+                Constructech Club
+              </p>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* Navigation */}
+        <div style={{
+          position: "absolute", bottom: "16px", left: 0, right: 0,
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
+          zIndex: 20,
+        }}>
+          <button onClick={prev} style={{
+            width: "32px", height: "32px", borderRadius: "50%", border: "1px solid #e8e5e0",
+            background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            opacity: cur === 0 ? 0.3 : 1, transition: "opacity 0.2s",
+          }}><ChevronLeft/></button>
+          <div style={{ display: "flex", gap: "4px" }}>
+            {Array.from({ length: TOTAL }, (_, i) => (
+              <button key={i} onClick={() => go(i)} style={{
+                width: i === cur ? "16px" : "6px", height: "6px", borderRadius: "3px",
+                background: i === cur ? GOLD : "#ddd", border: "none", cursor: "pointer",
+                transition: "all 0.3s ease",
+              }}/>
+            ))}
+          </div>
+          <button onClick={next} style={{
+            width: "32px", height: "32px", borderRadius: "50%", border: "1px solid #e8e5e0",
+            background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            opacity: cur === TOTAL - 1 ? 0.3 : 1, transition: "opacity 0.2s",
+          }}><ChevronRight/></button>
+        </div>
+
+        <p style={{ position: "absolute", bottom: "52px", left: 0, right: 0, textAlign: "center", fontSize: "10px", color: "#ccc" }}>
+          ← → pour naviguer
+        </p>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<SanteCarousel/>);
+</script>
+</body>
+</html>

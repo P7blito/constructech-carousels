@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Achats urgence — Constructech Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F5F3EE; font-family: 'DM Sans', sans-serif; }
+    @keyframes fadeCount { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const GOLD = "#C8A84E";
+const DARK = "#1a1a2e";
+const RED = "#e74c3c";
+const GREEN = "#27ae60";
+const ORANGE = "#e67e22";
+
+function NumberTicker({ value, suffix = "", prefix = "", duration = 1200, active }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    if (!active) { setDisplay(0); return; }
+    const num = parseInt(value);
+    if (isNaN(num)) return;
+    const t0 = Date.now();
+    const tick = () => {
+      const p = Math.min((Date.now() - t0) / duration, 1);
+      setDisplay(Math.round((1 - Math.pow(1 - p, 3)) * num));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [active, value, duration]);
+  return <span>{prefix}{display.toLocaleString("fr-FR")}{suffix}</span>;
+}
+
+function Slide({ active, dir, children }) {
+  return (
+    <div style={{
+      position: "absolute", inset: 0,
+      opacity: active ? 1 : 0,
+      transform: active ? "translateX(0)" : dir === "next" ? "translateX(40px)" : "translateX(-40px)",
+      transition: "all 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+      pointerEvents: active ? "auto" : "none",
+      display: "flex", flexDirection: "column", justifyContent: "center",
+      padding: "40px 36px", overflow: "hidden",
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function Anim({ children, delay = 0, active }) {
+  return (
+    <div style={{
+      opacity: active ? 1 : 0,
+      transform: active ? "translateY(0)" : "translateY(12px)",
+      transition: `all 0.35s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+const Tag = ({ children, color = GOLD }) => (
+  <span style={{
+    display: "inline-block", padding: "3px 12px", borderRadius: "100px",
+    fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
+    color, border: `1px solid ${color}30`, background: `${color}0A`, marginBottom: "16px",
+  }}>{children}</span>
+);
+
+const ChevronLeft = ({ size = 16, color = "#555" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+);
+const ChevronRight = ({ size = 16, color = "#555" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+);
+
+const FlowStep = ({ icon, label, sub, color = "#666", bg = "#FAF9F6", border = "#e8e5e0", accent = null }) => (
+  <div style={{ background: bg, borderRadius: "10px", border: `1px solid ${border}`, padding: "12px 14px", display: "flex", alignItems: "center", gap: "10px", position: "relative" }}>
+    {accent && <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: accent, borderRadius: "10px 0 0 10px" }}/>}
+    <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: `${color}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", flexShrink: 0 }}>{icon}</div>
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <p style={{ fontSize: "12px", fontWeight: 600, color: DARK, margin: 0 }}>{label}</p>
+      {sub && <p style={{ fontSize: "10px", color: "#999", margin: "2px 0 0" }}>{sub}</p>}
+    </div>
+  </div>
+);
+
+const FlowArrow = ({ color = "#ddd", label = null }) => (
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "3px 0" }}>
+    <svg width="12" height="16" viewBox="0 0 12 16"><path d="M6 0v12M2 9l4 4 4-4" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    {label && <span style={{ fontSize: "9px", color: "#bbb", marginTop: "1px" }}>{label}</span>}
+  </div>
+);
+
+function Carousel() {
+  const [cur, setCur] = useState(0);
+  const [dir, setDir] = useState("next");
+  const TOTAL = 6;
+
+  const go = (i) => { setDir(i > cur ? "next" : "prev"); setCur(i); };
+  const next = () => go(Math.min(cur + 1, TOTAL - 1));
+  const prev = () => go(Math.max(cur - 1, 0));
+
+  useEffect(() => {
+    const h = (e) => { if (e.key === "ArrowRight") next(); if (e.key === "ArrowLeft") prev(); };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [cur]);
+
+  return (
+    <div style={{
+      fontFamily: "'DM Sans', sans-serif",
+      background: "#F5F3EE",
+      minHeight: "100vh",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      padding: "20px",
+    }}>
+      <div style={{
+        width: "100%", maxWidth: "680px", aspectRatio: "4/5",
+        background: "#fff", borderRadius: "16px",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06)",
+        position: "relative", overflow: "hidden", border: "1px solid #e8e5e0",
+      }}>
+        {/* Progress bar */}
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "#eee", zIndex: 20 }}>
+          <div style={{ height: "100%", width: `${((cur + 1) / TOTAL) * 100}%`, background: GOLD, transition: "width 0.4s ease", borderRadius: "0 1px 1px 0" }}/>
+        </div>
+        <div style={{ position: "absolute", top: "14px", right: "18px", fontSize: "11px", color: "#bbb", zIndex: 20, fontVariantNumeric: "tabular-nums" }}>
+          {cur + 1}/{TOTAL}
+        </div>
+
+        {/* SLIDE 1: COVER */}
+        <Slide active={cur === 0} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "500px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 0}><Tag>Constructech Club</Tag></Anim>
+            <Anim delay={80} active={cur === 0}>
+              <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(24px, 4.5vw, 36px)", fontWeight: 400, color: DARK, lineHeight: 1.15, margin: "0 0 16px" }}>
+                Mes ouvriers se sont tourn{"\u00e9"} les pouces pendant 4 jours.
+              </h1>
+            </Anim>
+            <Anim delay={160} active={cur === 0}>
+              <div style={{ width: "40px", height: "1px", background: GOLD, margin: "0 auto 16px" }}/>
+              <p style={{ fontSize: "clamp(16px, 3vw, 22px)", fontWeight: 500, color: GOLD, margin: "0 0 24px", lineHeight: 1.3, fontFamily: "'Instrument Serif', serif" }}>
+                Pas une gr{"\u00e8"}ve.<br/>Un probl{"\u00e8"}me de mat{"\u00e9"}riel.
+              </p>
+            </Anim>
+            <Anim delay={280} active={cur === 0}>
+              <p style={{ fontSize: "13px", color: "#999", lineHeight: 1.6 }}>
+                Quand les achats d'urgence deviennent la norme,<br/>c'est tout le chantier qui trinque.
+              </p>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 2: LA CHAINE */}
+        <Slide active={cur === 1} dir={dir}>
+          <Anim delay={0} active={cur === 1}>
+            <Tag color={RED}>Le probl{"\u00e8"}me</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>La cha{"\u00ee"}ne de l'urgence</h2>
+          </Anim>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
+            <Anim delay={80} active={cur === 1}>
+              <FlowStep icon="👷" label="L'ouvrier constate qu'il manque du mat{"\u00e9"}riel" sub="Lundi matin, sur le chantier" color="#3498db" accent="#3498db"/>
+            </Anim>
+            <Anim delay={140} active={cur === 1}><FlowArrow/></Anim>
+            <Anim delay={160} active={cur === 1}>
+              <FlowStep icon="📞" label="Il appelle le chef de chantier" sub="Qui doit arr{"\u00ea"}ter ce qu'il fait pour g{"\u00e9"}rer" color={ORANGE} accent={ORANGE}/>
+            </Anim>
+            <Anim delay={220} active={cur === 1}><FlowArrow/></Anim>
+            <Anim delay={260} active={cur === 1}>
+              <FlowStep icon="🛒" label="Le chef contacte l'acheteur" sub="Qui passe une commande en urgence" color={ORANGE} accent={ORANGE}/>
+            </Anim>
+            <Anim delay={320} active={cur === 1}><FlowArrow/></Anim>
+            <Anim delay={360} active={cur === 1}>
+              <FlowStep icon="🏭" label="Le fournisseur livre... quand il peut" sub="D{"\u00e9"}lai rallong{"\u00e9"}, surco{"\u00fb"}t express" color={RED} bg="#FFF5F5" border="#fde2e2" accent={RED}/>
+            </Anim>
+          </div>
+          <Anim delay={420} active={cur === 1}>
+            <div style={{ marginTop: "14px", padding: "10px 14px", borderRadius: "10px", background: `${RED}08`, border: `1px solid ${RED}20`, textAlign: "center" }}>
+              <p style={{ fontSize: "12px", color: RED, fontWeight: 600, margin: 0 }}>C'est d{"\u00e9"}j{"\u00e0"} urgent avant m{"\u00ea"}me que la commande ne parte.</p>
+            </div>
+          </Anim>
+        </Slide>
+
+        {/* SLIDE 3: LE COUT */}
+        <Slide active={cur === 2} dir={dir}>
+          <Anim delay={0} active={cur === 2}>
+            <Tag color={RED}>L'impact</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 20px" }}>Ce que {"\u00e7"}a co{"\u00fb"}te vraiment</h2>
+          </Anim>
+
+          <Anim delay={100} active={cur === 2}>
+            <div style={{ background: "#FFF5F5", borderRadius: "14px", border: "1px solid #fde2e2", padding: "20px", textAlign: "center", marginBottom: "14px" }}>
+              <p style={{ fontSize: "12px", color: RED, fontWeight: 600, margin: "0 0 6px", textTransform: "uppercase", letterSpacing: "0.08em" }}>4 jours d'arr{"\u00ea"}t</p>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "42px", color: RED, margin: "0 0 4px", lineHeight: 1 }}>
+                4 ouvriers
+              </p>
+              <p style={{ fontSize: "12px", color: "#e74c3c90", margin: 0 }}>+ surco{"\u00fb"}ts livraison express + d{"\u00e9"}sorganisation</p>
+            </div>
+          </Anim>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            <Anim delay={200} active={cur === 2}>
+              <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
+                <p style={{ fontSize: "20px", margin: "0 0 4px" }}>💰</p>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: ORANGE, margin: "0 0 2px" }}>+30%</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>surco{"\u00fb"}t sur les<br/>commandes urgentes</p>
+              </div>
+            </Anim>
+            <Anim delay={250} active={cur === 2}>
+              <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
+                <p style={{ fontSize: "20px", margin: "0 0 4px" }}>⏱️</p>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: ORANGE, margin: "0 0 2px" }}>3-5h</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>perdues par le chef<br/>{"\u00e0"} g{"\u00e9"}rer l'urgence</p>
+              </div>
+            </Anim>
+            <Anim delay={300} active={cur === 2}>
+              <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
+                <p style={{ fontSize: "20px", margin: "0 0 4px" }}>🔄</p>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: ORANGE, margin: "0 0 2px" }}>40%</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>des commandes<br/>pass{"\u00e9"}es en urgence</p>
+              </div>
+            </Anim>
+            <Anim delay={350} active={cur === 2}>
+              <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "14px", textAlign: "center" }}>
+                <p style={{ fontSize: "20px", margin: "0 0 4px" }}>😤</p>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: ORANGE, margin: "0 0 2px" }}>Moral</p>
+                <p style={{ fontSize: "10px", color: "#999", margin: 0 }}>{"\u00e9"}quipes d{"\u00e9"}mobilis{"\u00e9"}es<br/>par l'attente</p>
+              </div>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 4: SOLUTION */}
+        <Slide active={cur === 3} dir={dir}>
+          <Anim delay={0} active={cur === 3}>
+            <Tag color={GREEN}>La solution</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 16px" }}>Anticiper au lieu de r{"\u00e9"}agir</h2>
+          </Anim>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
+            <Anim delay={80} active={cur === 3}>
+              <FlowStep icon="📋" label="Liste des besoins chaque lundi" sub="Chaque chef de chantier remonte ses besoins de la semaine" color={GREEN} accent={GREEN}/>
+            </Anim>
+            <Anim delay={140} active={cur === 3}><FlowArrow color={GREEN}/></Anim>
+            <Anim delay={160} active={cur === 3}>
+              <FlowStep icon="📊" label="Consolidation centralis{"\u00e9"}e" sub="L'acheteur regroupe tous les besoins en un seul tableau" color="#3498db" accent="#3498db"/>
+            </Anim>
+            <Anim delay={220} active={cur === 3}><FlowArrow color={GREEN}/></Anim>
+            <Anim delay={260} active={cur === 3}>
+              <FlowStep icon="📦" label="Commande group{"\u00e9"}e mardi" sub="Un seul bon, un seul envoi, des prix n{"\u00e9"}goci{"\u00e9"}s" color={GREEN} bg="#F0FAF4" border="#d4edda" accent={GREEN}/>
+            </Anim>
+            <Anim delay={320} active={cur === 3}><FlowArrow color={GREEN}/></Anim>
+            <Anim delay={360} active={cur === 3}>
+              <FlowStep icon="🚚" label="Livraison planifi{"\u00e9"}e jeudi" sub="Mat{"\u00e9"}riel sur chantier avant le besoin r{"\u00e9"}el" color={GREEN} bg="#F0FAF4" border="#d4edda" accent={GREEN}/>
+            </Anim>
+          </div>
+          <Anim delay={420} active={cur === 3}>
+            <p style={{ fontSize: "11px", color: "#bbb", textAlign: "center", marginTop: "14px", fontStyle: "italic" }}>
+              Simple. R{"\u00e9"}p{"\u00e9"}table. Pas besoin de logiciel.
+            </p>
+          </Anim>
+        </Slide>
+
+        {/* SLIDE 5: RESULTAT */}
+        <Slide active={cur === 4} dir={dir}>
+          <div style={{ textAlign: "center" }}>
+            <Anim delay={0} active={cur === 4}>
+              <Tag color={GREEN}>R{"\u00e9"}sultat</Tag>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "18px", color: "#999", margin: "0 0 8px" }}>Commandes en urgence</p>
+            </Anim>
+            <Anim delay={150} active={cur === 4}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "20px", margin: "20px 0" }}>
+                <div style={{ textAlign: "center" }}>
+                  <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "52px", color: RED, margin: 0, lineHeight: 1 }}>
+                    <NumberTicker value={40} suffix="%" active={cur === 4}/>
+                  </p>
+                  <p style={{ fontSize: "11px", color: RED, fontWeight: 600, margin: "4px 0 0", textTransform: "uppercase", letterSpacing: "0.06em" }}>Avant</p>
+                </div>
+                <div style={{ fontSize: "28px", color: GREEN }}>→</div>
+                <div style={{ textAlign: "center" }}>
+                  <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "52px", color: GREEN, margin: 0, lineHeight: 1 }}>
+                    <NumberTicker value={8} suffix="%" active={cur === 4}/>
+                  </p>
+                  <p style={{ fontSize: "11px", color: GREEN, fontWeight: 600, margin: "4px 0 0", textTransform: "uppercase", letterSpacing: "0.06em" }}>Apr{"\u00e8"}s</p>
+                </div>
+              </div>
+            </Anim>
+            <Anim delay={300} active={cur === 4}>
+              <div style={{ background: "#F0FAF4", borderRadius: "14px", border: "1px solid #d4edda", padding: "20px", margin: "16px 0" }}>
+                <p style={{ fontSize: "13px", color: "#444", lineHeight: 1.6, margin: 0 }}>
+                  Moins d'urgences = moins de surco{"\u00fb"}ts, moins de stress,<br/>et des {"\u00e9"}quipes qui avancent au lieu d'attendre.
+                </p>
+              </div>
+            </Anim>
+            <Anim delay={400} active={cur === 4}>
+              <div style={{ display: "flex", gap: "8px", justifyContent: "center", marginTop: "12px" }}>
+                {["-30% de surco\u00fbts", "+2j de productivit\u00e9", "Moral \u00e9quipes"].map((t, i) => (
+                  <span key={i} style={{ padding: "5px 10px", borderRadius: "6px", background: "#FAF9F6", border: "1px solid #e8e5e0", fontSize: "10px", color: "#888", fontWeight: 500 }}>{t}</span>
+                ))}
+              </div>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 6: CTA */}
+        <Slide active={cur === 5} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "440px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 5}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: `${GOLD}15`, border: `1px solid ${GOLD}30`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", fontSize: "22px" }}>📦</div>
+            </Anim>
+            <Anim delay={100} active={cur === 5}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "28px", color: DARK, lineHeight: 1.3, margin: "0 0 12px" }}>
+                Vos urgences sont-elles vraiment impr{"\u00e9"}visibles ?
+              </h2>
+            </Anim>
+            <Anim delay={200} active={cur === 5}>
+              <p style={{ fontSize: "14px", color: "#888", lineHeight: 1.6, margin: "0 0 28px" }}>
+                La plupart des achats "urgents" sont pr{"\u00e9"}visibles.<br/>Il manque juste un process pour les anticiper.
+              </p>
+            </Anim>
+            <Anim delay={300} active={cur === 5}>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: "8px",
+                padding: "14px 32px", borderRadius: "100px",
+                background: GOLD, color: "#fff", fontSize: "14px", fontWeight: 600,
+              }}>
+                DM ouverts — constructech.club
+              </div>
+            </Anim>
+            <Anim delay={450} active={cur === 5}>
+              <div style={{ marginTop: "24px", display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
+                {["Audit process", "Ateliers terrain", "Conduite du changement"].map((t, i) => (
+                  <span key={i} style={{ padding: "5px 10px", borderRadius: "6px", background: "#FAF9F6", border: "1px solid #e8e5e0", fontSize: "10px", color: "#888", fontWeight: 500 }}>{t}</span>
+                ))}
+              </div>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* Navigation */}
+        <div style={{
+          position: "absolute", bottom: "16px", left: 0, right: 0,
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
+          zIndex: 20,
+        }}>
+          <button onClick={prev} style={{
+            width: "32px", height: "32px", borderRadius: "50%", border: "1px solid #e8e5e0",
+            background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            opacity: cur === 0 ? 0.3 : 1, transition: "opacity 0.2s",
+          }}><ChevronLeft/></button>
+          <div style={{ display: "flex", gap: "4px" }}>
+            {Array.from({ length: TOTAL }, (_, i) => (
+              <button key={i} onClick={() => go(i)} style={{
+                width: i === cur ? "16px" : "6px", height: "6px", borderRadius: "3px",
+                background: i === cur ? GOLD : "#ddd", border: "none", cursor: "pointer",
+                transition: "all 0.3s ease",
+              }}/>
+            ))}
+          </div>
+          <button onClick={next} style={{
+            width: "32px", height: "32px", borderRadius: "50%", border: "1px solid #e8e5e0",
+            background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            opacity: cur === TOTAL - 1 ? 0.3 : 1, transition: "opacity 0.2s",
+          }}><ChevronRight/></button>
+        </div>
+
+        <p style={{ position: "absolute", bottom: "52px", left: 0, right: 0, textAlign: "center", fontSize: "10px", color: "#ccc" }}>
+          {"\u2190"} {"\u2192"} pour naviguer
+        </p>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Carousel/>);
+</script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BET heures sup — Constructech Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F5F3EE; font-family: 'DM Sans', sans-serif; }
+    @keyframes fadeCount { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const GOLD = "#C8A84E";
+const DARK = "#1a1a2e";
+const RED = "#e74c3c";
+const GREEN = "#27ae60";
+const ORANGE = "#e67e22";
+const BLUE = "#3498db";
+
+function NumberTicker({ value, suffix = "", prefix = "", duration = 1200, active }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    if (!active) { setDisplay(0); return; }
+    const num = parseInt(value);
+    if (isNaN(num)) return;
+    const t0 = Date.now();
+    const tick = () => {
+      const p = Math.min((Date.now() - t0) / duration, 1);
+      setDisplay(Math.round((1 - Math.pow(1 - p, 3)) * num));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [active, value, duration]);
+  return <span>{prefix}{display.toLocaleString("fr-FR")}{suffix}</span>;
+}
+
+function Slide({ active, dir, children }) {
+  return (
+    <div style={{
+      position: "absolute", inset: 0,
+      opacity: active ? 1 : 0,
+      transform: active ? "translateX(0)" : dir === "next" ? "translateX(40px)" : "translateX(-40px)",
+      transition: "all 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+      pointerEvents: active ? "auto" : "none",
+      display: "flex", flexDirection: "column", justifyContent: "center",
+      padding: "40px 36px", overflow: "hidden",
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function Anim({ children, delay = 0, active }) {
+  return (
+    <div style={{
+      opacity: active ? 1 : 0,
+      transform: active ? "translateY(0)" : "translateY(12px)",
+      transition: `all 0.35s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+const Tag = ({ children, color = GOLD }) => (
+  <span style={{
+    display: "inline-block", padding: "3px 12px", borderRadius: "100px",
+    fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
+    color, border: `1px solid ${color}30`, background: `${color}0A`, marginBottom: "16px",
+  }}>{children}</span>
+);
+
+const ChevronLeft = ({ size = 16, color = "#555" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+);
+const ChevronRight = ({ size = 16, color = "#555" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+);
+
+/* Horizontal Bar component */
+const HBar = ({ label, value, maxVal, color, delay, active, suffix = "h" }) => {
+  const pct = (value / maxVal) * 100;
+  return (
+    <Anim delay={delay} active={active}>
+      <div style={{ marginBottom: "12px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+          <span style={{ fontSize: "11px", color: "#888" }}>{label}</span>
+          <span style={{ fontSize: "11px", fontWeight: 600, color }}>{value}{suffix}</span>
+        </div>
+        <div style={{ height: "20px", background: "#f5f3ee", borderRadius: "6px", overflow: "hidden" }}>
+          <div style={{
+            height: "100%", width: active ? `${pct}%` : "0%", background: color, borderRadius: "6px",
+            transition: `width 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 100}ms`,
+          }}/>
+        </div>
+      </div>
+    </Anim>
+  );
+};
+
+function Carousel() {
+  const [cur, setCur] = useState(0);
+  const [dir, setDir] = useState("next");
+  const TOTAL = 6;
+
+  const go = (i) => { setDir(i > cur ? "next" : "prev"); setCur(i); };
+  const next = () => go(Math.min(cur + 1, TOTAL - 1));
+  const prev = () => go(Math.max(cur - 1, 0));
+
+  useEffect(() => {
+    const h = (e) => { if (e.key === "ArrowRight") next(); if (e.key === "ArrowLeft") prev(); };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [cur]);
+
+  return (
+    <div style={{
+      fontFamily: "'DM Sans', sans-serif",
+      background: "#F5F3EE",
+      minHeight: "100vh",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      padding: "20px",
+    }}>
+      <div style={{
+        width: "100%", maxWidth: "680px", aspectRatio: "4/5",
+        background: "#fff", borderRadius: "16px",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06)",
+        position: "relative", overflow: "hidden", border: "1px solid #e8e5e0",
+      }}>
+        {/* Progress bar */}
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "#eee", zIndex: 20 }}>
+          <div style={{ height: "100%", width: `${((cur + 1) / TOTAL) * 100}%`, background: GOLD, transition: "width 0.4s ease", borderRadius: "0 1px 1px 0" }}/>
+        </div>
+        <div style={{ position: "absolute", top: "14px", right: "18px", fontSize: "11px", color: "#bbb", zIndex: 20, fontVariantNumeric: "tabular-nums" }}>
+          {cur + 1}/{TOTAL}
+        </div>
+
+        {/* SLIDE 1: COVER */}
+        <Slide active={cur === 0} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "500px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 0}><Tag>Constructech Club</Tag></Anim>
+            <Anim delay={80} active={cur === 0}>
+              <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(20px, 4vw, 28px)", fontWeight: 400, color: DARK, lineHeight: 1.3, margin: "0 0 12px" }}>
+                Ton commercial a vendu :
+              </h1>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(36px, 7vw, 56px)", fontWeight: 400, color: BLUE, margin: "0 0 4px", lineHeight: 1 }}>200h</p>
+            </Anim>
+            <Anim delay={160} active={cur === 0}>
+              <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(20px, 4vw, 28px)", fontWeight: 400, color: DARK, lineHeight: 1.3, margin: "12px 0 12px" }}>
+                Toi, t'en es a :
+              </h1>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(36px, 7vw, 56px)", fontWeight: 400, color: RED, margin: "0 0 16px", lineHeight: 1 }}>350h</p>
+            </Anim>
+            <Anim delay={300} active={cur === 0}>
+              <p style={{ fontSize: "32px", margin: "0" }}>🫠</p>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* SLIDE 2: DECALAGE — bar chart vendues vs reelles */}
+        <Slide active={cur === 1} dir={dir}>
+          <Anim delay={0} active={cur === 1}>
+            <Tag color={RED}>Le decalage</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 18px" }}>Heures vendues vs reelles</h2>
+          </Anim>
+          <HBar label="Projet A — Vendues" value={200} maxVal={400} color={BLUE} delay={80} active={cur === 1}/>
+          <HBar label="Projet A — Reelles" value={350} maxVal={400} color={RED} delay={140} active={cur === 1}/>
+          <div style={{ height: "8px" }}/>
+          <HBar label="Projet B — Vendues" value={150} maxVal={400} color={BLUE} delay={200} active={cur === 1}/>
+          <HBar label="Projet B — Reelles" value={280} maxVal={400} color={RED} delay={260} active={cur === 1}/>
+          <div style={{ height: "8px" }}/>
+          <HBar label="Projet C — Vendues" value={100} maxVal={400} color={BLUE} delay={320} active={cur === 1}/>
+          <HBar label="Projet C — Reelles" value={185} maxVal={400} color={ORANGE} delay={380} active={cur === 1}/>
+          <Anim delay={440} active={cur === 1}>
+            <p style={{ fontSize: "11px", color: "#bbb", textAlign: "center", marginTop: "8px", fontStyle: "italic" }}>
+              Le decalage est systematique. Pas exceptionnel.
+            </p>
+          </Anim>
+        </Slide>
+
+        {/* SLIDE 3: COUT */}
+        <Slide active={cur === 2} dir={dir}>
+          <Anim delay={0} active={cur === 2}>
+            <Tag color={RED}>Le cout</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 20px" }}>Ce que ca coute vraiment</h2>
+          </Anim>
+          <Anim delay={100} active={cur === 2}>
+            <div style={{ background: "#FFF5F5", borderRadius: "14px", border: "1px solid #fde2e2", padding: "24px", textAlign: "center", marginBottom: "16px" }}>
+              <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "44px", color: RED, margin: "0 0 4px", lineHeight: 1 }}>
+                265-300h
+              </p>
+              <p style={{ fontSize: "13px", color: RED, margin: "4px 0 0", fontWeight: 600 }}>d'heures supplementaires par an</p>
+              <p style={{ fontSize: "11px", color: "#e74c3c90", margin: "8px 0 0" }}>non facturees, non prevues, non visibles</p>
+            </div>
+          </Anim>
+          <Anim delay={250} active={cur === 2}>
+            <div style={{ background: "#FAF9F6", borderRadius: "10px", border: "1px solid #e8e5e0", padding: "16px", textAlign: "center" }}>
+              <p style={{ fontSize: "12px", color: "#888", margin: 0, lineHeight: 1.5 }}>
+                Et une erreur de chiffrage decouverte en cours de projet coute <span style={{ color: RED, fontWeight: 600 }}>10x plus cher</span> a corriger qu'au devis.
+              </p>
+            </div>
+          </Anim>
+        </Slide>
+
+        {/* SLIDE 4: SOLUTION — dashboard */}
+        <Slide active={cur === 3} dir={dir}>
+          <Anim delay={0} active={cur === 3}>
+            <Tag color={GREEN}>La solution</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 18px" }}>Dashboard heures reelles vs budget</h2>
+          </Anim>
+          <Anim delay={100} active={cur === 3}>
+            <div style={{ background: "#F0FAF4", borderRadius: "14px", border: "1px solid #d4edda", padding: "18px", marginBottom: "14px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
+                <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: `${GREEN}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>📊</div>
+                <div>
+                  <p style={{ fontSize: "12px", fontWeight: 600, color: DARK, margin: 0 }}>Suivi temps reel</p>
+                  <p style={{ fontSize: "10px", color: "#999", margin: "2px 0 0" }}>Par projet, par phase, par collaborateur</p>
+                </div>
+              </div>
+              {[
+                { label: "Projet Residence Alma", vendues: "200h", reelles: "185h", pct: "92%", color: GREEN },
+                { label: "Projet Tour B3", vendues: "300h", reelles: "310h", pct: "103%", color: ORANGE },
+                { label: "Projet Clinique Sud", vendues: "150h", reelles: "220h", pct: "147%", color: RED },
+              ].map((p, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", background: "#fff", borderRadius: "8px", marginBottom: "4px", border: "1px solid #e8e5e0" }}>
+                  <div>
+                    <p style={{ fontSize: "11px", fontWeight: 500, color: DARK, margin: 0 }}>{p.label}</p>
+                    <p style={{ fontSize: "9px", color: "#999", margin: "2px 0 0" }}>Vendues: {p.vendues} · Reelles: {p.reelles}</p>
+                  </div>
+                  <span style={{ fontSize: "13px", fontWeight: 700, color: p.color }}>{p.pct}</span>
+                </div>
+              ))}
+            </div>
+          </Anim>
+        </Slide>
+
+        {/* SLIDE 5: RESULTAT */}
+        <Slide active={cur === 4} dir={dir}>
+          <Anim delay={0} active={cur === 4}>
+            <Tag color={GREEN}>Le resultat</Tag>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 20px" }}>Le commercial ajuste ses devis</h2>
+          </Anim>
+          <Anim delay={100} active={cur === 4}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
+              <div style={{ padding: "20px 14px", borderRadius: "14px", background: "#FFF5F5", border: "1px solid #fde2e2", textAlign: "center" }}>
+                <p style={{ fontSize: "10px", fontWeight: 700, color: RED, margin: "0 0 10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Avant</p>
+                <p style={{ fontSize: "11px", color: "#666", margin: "0 0 6px", lineHeight: 1.4 }}>Chiffrage au feeling</p>
+                <p style={{ fontSize: "11px", color: "#666", margin: "0 0 6px", lineHeight: 1.4 }}>Aucune donnee terrain</p>
+                <p style={{ fontSize: "11px", color: "#666", margin: "0 0 6px", lineHeight: 1.4 }}>Depassements systematiques</p>
+                <div style={{ marginTop: "10px", padding: "8px", borderRadius: "8px", background: "#fde2e2" }}>
+                  <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "18px", color: RED, margin: 0 }}>+75% heures</p>
+                </div>
+              </div>
+              <div style={{ padding: "20px 14px", borderRadius: "14px", background: "#F0FAF4", border: "1px solid #d4edda", textAlign: "center" }}>
+                <p style={{ fontSize: "10px", fontWeight: 700, color: GREEN, margin: "0 0 10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Apres</p>
+                <p style={{ fontSize: "11px", color: "#666", margin: "0 0 6px", lineHeight: 1.4 }}>Chiffrage base sur le reel</p>
+                <p style={{ fontSize: "11px", color: "#666", margin: "0 0 6px", lineHeight: 1.4 }}>Historique par type de projet</p>
+                <p style={{ fontSize: "11px", color: "#666", margin: "0 0 6px", lineHeight: 1.4 }}>Ecart maitrise a 10%</p>
+                <div style={{ marginTop: "10px", padding: "8px", borderRadius: "8px", background: "#d4edda" }}>
+                  <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: "18px", color: GREEN, margin: 0 }}>Marge protegee</p>
+                </div>
+              </div>
+            </div>
+          </Anim>
+          <Anim delay={300} active={cur === 4}>
+            <p style={{ fontSize: "12px", color: "#bbb", textAlign: "center", fontStyle: "italic" }}>
+              Le commercial vend juste. Le BET produit sereinement.
+            </p>
+          </Anim>
+        </Slide>
+
+        {/* SLIDE 6: CTA */}
+        <Slide active={cur === 5} dir={dir}>
+          <div style={{ textAlign: "center", maxWidth: "440px", margin: "0 auto" }}>
+            <Anim delay={0} active={cur === 5}>
+              <p style={{ fontSize: "48px", margin: "0 0 16px" }}>🫠</p>
+            </Anim>
+            <Anim delay={100} active={cur === 5}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "26px", color: DARK, lineHeight: 1.3, margin: "0 0 12px" }}>
+                Si tu t'es reconnu, envoie 🫠
+              </h2>
+            </Anim>
+            <Anim delay={200} active={cur === 5}>
+              <p style={{ fontSize: "14px", color: "#888", lineHeight: 1.6, margin: "0 0 28px" }}>
+                On t'aide a mettre en place le suivi d'heures qui manque entre le commercial et la prod.
+              </p>
+            </Anim>
+            <Anim delay={300} active={cur === 5}>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: "8px",
+                padding: "14px 32px", borderRadius: "100px",
+                background: GOLD, color: "#fff", fontSize: "14px", fontWeight: 600,
+              }}>
+                DM ouverts — constructech.club
+              </div>
+            </Anim>
+            <Anim delay={450} active={cur === 5}>
+              <div style={{ marginTop: "24px", display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
+                {["Suivi heures", "Dashboard BET", "Chiffrage calibre"].map((t, i) => (
+                  <span key={i} style={{ padding: "5px 10px", borderRadius: "6px", background: "#FAF9F6", border: "1px solid #e8e5e0", fontSize: "10px", color: "#888", fontWeight: 500 }}>{t}</span>
+                ))}
+              </div>
+            </Anim>
+          </div>
+        </Slide>
+
+        {/* Navigation */}
+        <div style={{
+          position: "absolute", bottom: "16px", left: 0, right: 0,
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
+          zIndex: 20,
+        }}>
+          <button onClick={prev} style={{
+            width: "32px", height: "32px", borderRadius: "50%", border: "1px solid #e8e5e0",
+            background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            opacity: cur === 0 ? 0.3 : 1, transition: "opacity 0.2s",
+          }}><ChevronLeft/></button>
+          <div style={{ display: "flex", gap: "4px" }}>
+            {Array.from({ length: TOTAL }, (_, i) => (
+              <button key={i} onClick={() => go(i)} style={{
+                width: i === cur ? "16px" : "6px", height: "6px", borderRadius: "3px",
+                background: i === cur ? GOLD : "#ddd", border: "none", cursor: "pointer",
+                transition: "all 0.3s ease",
+              }}/>
+            ))}
+          </div>
+          <button onClick={next} style={{
+            width: "32px", height: "32px", borderRadius: "50%", border: "1px solid #e8e5e0",
+            background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            opacity: cur === TOTAL - 1 ? 0.3 : 1, transition: "opacity 0.2s",
+          }}><ChevronRight/></button>
+        </div>
+
+        <p style={{ position: "absolute", bottom: "52px", left: 0, right: 0, textAlign: "center", fontSize: "10px", color: "#ccc" }}>
+          ← → pour naviguer
+        </p>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Carousel/>);
+</script>
+</body>
+</html>
