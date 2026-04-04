@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BET heures sup — Constructech Club</title>
+  <title>BET heures sup, Constructech Club</title>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -170,20 +170,20 @@ function Carousel() {
           </div>
         </Slide>
 
-        {/* SLIDE 2: DECALAGE — bar chart vendues vs reelles */}
+        {/* SLIDE 2: DECALAGE, bar chart vendues vs reelles */}
         <Slide active={cur === 1} dir={dir}>
           <Anim delay={0} active={cur === 1}>
             <Tag color={RED}>Le decalage</Tag>
             <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "22px", color: DARK, margin: "0 0 18px" }}>Heures vendues vs reelles</h2>
           </Anim>
-          <HBar label="Projet A — Vendues" value={200} maxVal={400} color={BLUE} delay={80} active={cur === 1}/>
-          <HBar label="Projet A — Reelles" value={350} maxVal={400} color={RED} delay={140} active={cur === 1}/>
+          <HBar label="Projet A, Vendues" value={200} maxVal={400} color={BLUE} delay={80} active={cur === 1}/>
+          <HBar label="Projet A, Reelles" value={350} maxVal={400} color={RED} delay={140} active={cur === 1}/>
           <div style={{ height: "8px" }}/>
-          <HBar label="Projet B — Vendues" value={150} maxVal={400} color={BLUE} delay={200} active={cur === 1}/>
-          <HBar label="Projet B — Reelles" value={280} maxVal={400} color={RED} delay={260} active={cur === 1}/>
+          <HBar label="Projet B, Vendues" value={150} maxVal={400} color={BLUE} delay={200} active={cur === 1}/>
+          <HBar label="Projet B, Reelles" value={280} maxVal={400} color={RED} delay={260} active={cur === 1}/>
           <div style={{ height: "8px" }}/>
-          <HBar label="Projet C — Vendues" value={100} maxVal={400} color={BLUE} delay={320} active={cur === 1}/>
-          <HBar label="Projet C — Reelles" value={185} maxVal={400} color={ORANGE} delay={380} active={cur === 1}/>
+          <HBar label="Projet C, Vendues" value={100} maxVal={400} color={BLUE} delay={320} active={cur === 1}/>
+          <HBar label="Projet C, Reelles" value={185} maxVal={400} color={ORANGE} delay={380} active={cur === 1}/>
           <Anim delay={440} active={cur === 1}>
             <p style={{ fontSize: "11px", color: "#bbb", textAlign: "center", marginTop: "8px", fontStyle: "italic" }}>
               Le decalage est systematique. Pas exceptionnel.
@@ -215,7 +215,7 @@ function Carousel() {
           </Anim>
         </Slide>
 
-        {/* SLIDE 4: SOLUTION — dashboard */}
+        {/* SLIDE 4: SOLUTION, dashboard */}
         <Slide active={cur === 3} dir={dir}>
           <Anim delay={0} active={cur === 3}>
             <Tag color={GREEN}>La solution</Tag>
@@ -304,7 +304,7 @@ function Carousel() {
                 padding: "14px 32px", borderRadius: "100px",
                 background: GOLD, color: "#fff", fontSize: "14px", fontWeight: 600,
               }}>
-                DM ouverts — constructech.club
+                DM ouverts, constructech.club
               </div>
             </Anim>
             <Anim delay={450} active={cur === 5}>
